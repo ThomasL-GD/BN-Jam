@@ -12,3 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e01568654d92c647a734edc7f248ab1, type: 3}
   m_Name: TestTilesContent
   m_EditorClassIdentifier: 
+  walls:
+  - {x: 1, y: 2}
+  buttons:
+  - {x: 3, y: 1}

@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Tiles;
 using UnityEditor;
 using UnityEngine;
 using static UnityEditor.EditorGUILayout;
@@ -19,6 +18,7 @@ public class BoardBehaviourEditor : Editor {
         SerializedProperty tileSelected = serializedObject.FindProperty("m_selectedTile");
         SerializedProperty prefabBloc = serializedObject.FindProperty("m_prefabBloc");
         SerializedProperty prefabButton = serializedObject.FindProperty("m_prefabButton");
+        SerializedProperty prefabChest = serializedObject.FindProperty("m_prefabChest");
         SerializedProperty tilesContent = serializedObject.FindProperty("m_tilesContent");
         
         PropertyField(tilesContent);
@@ -49,7 +49,14 @@ public class BoardBehaviourEditor : Editor {
             GameObject go = PrefabUtility.InstantiatePrefab(prefabButton.objectReferenceValue) as GameObject;
             if (go != null) go.transform.position = ((BoardBehavior)target).PositionFromCoordinates(tileSelected.vector2IntValue.x, tileSelected.vector2IntValue.y);
             
-            ((BoardBehavior)target).SetTileButton(tileSelected.vector2IntValue, go.GetComponent<ButtonBehaviour>());
+            ((BoardBehavior)target).SetTileButton(tileSelected.vector2IntValue, go.GetComponent<ButtonOnGroundBehaviour>());
+        }
+
+        if (GUILayout.Button("Place a Button")) {
+            GameObject go = PrefabUtility.InstantiatePrefab(prefabChest.objectReferenceValue) as GameObject;
+            if (go != null) go.transform.position = ((BoardBehavior)target).PositionFromCoordinates(tileSelected.vector2IntValue.x, tileSelected.vector2IntValue.y);
+            
+            ((BoardBehavior)target).SetTileChest(tileSelected.vector2IntValue, go.GetComponent<ChestBehavior>());
         }
 
         if (GUILayout.Button("Clear Tile")) {

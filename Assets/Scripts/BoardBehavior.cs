@@ -1,5 +1,4 @@
 using System;
-using Tiles;
 using UnityEngine;
 
 public class BoardBehavior : MonoBehaviour {
@@ -16,12 +15,15 @@ public class BoardBehavior : MonoBehaviour {
 
     [SerializeField, HideInInspector] private SOTilesContent m_tilesContent;
     private Tile[,] m_tiles;
+
+    private int m_numberOfPressedButton = 0;
     
 #if UNITY_EDITOR
     [SerializeField, HideInInspector] private Vector2Int m_selectedTile;
     
     [SerializeField, HideInInspector] private GameObject m_prefabBloc;
     [SerializeField, HideInInspector] private GameObject m_prefabButton;
+    [SerializeField, HideInInspector] private GameObject m_prefabChest;
 #endif
     private void OnValidate() {
         UpdateTiles();
@@ -59,8 +61,8 @@ public class BoardBehavior : MonoBehaviour {
         foreach (Vector2Int coordinates in m_tilesContent.walls) {
             m_tiles[coordinates.x, coordinates.y] = Tile.Bloc;
         }
-        foreach (SOTilesContent.Button button in m_tilesContent.buttons) {
-            m_tiles[button.cordinates.x, button.cordinates.y] = Tile.Button;
+        foreach (Vector2Int coordinates in m_tilesContent.buttons) {
+            m_tiles[coordinates.x, coordinates.y] = Tile.Button;
         }
     }
 
@@ -148,8 +150,17 @@ public class BoardBehavior : MonoBehaviour {
         UpdateTiles();
     }
 
-    public void SetTileButton(Vector2Int p_coord, ButtonBehaviour p_script) {
-        m_tilesContent.buttons.Add(new SOTilesContent.Button(){cordinates = p_coord, script = p_script});
+    public void SetTileButton(Vector2Int p_coord, ButtonOnGroundBehaviour p_script) {
+        p_script.coordinates = p_coord;
+        p_script.m_board = this;
+        m_tilesContent.buttons.Add(p_coord);
+        UpdateTiles();
+    }
+
+    public void SetTileChest(Vector2Int p_coord, ChestBehavior p_script) {
+        p_script.coordinates = p_coord;
+        p_script.m_board = this;
+        m_tilesContent.buttons.Add(p_coord);
         UpdateTiles();
     }
     
@@ -158,29 +169,23 @@ public class BoardBehavior : MonoBehaviour {
             if(m_tilesContent.walls[i] == p_coord) m_tilesContent.walls.RemoveAt(i);
         }
         for (int i = 0; i < m_tilesContent.buttons.Count; i++) {
-            if(m_tilesContent.buttons[i].cordinates == p_coord) m_tilesContent.buttons.RemoveAt(i);
+            if(m_tilesContent.buttons[i] == p_coord) m_tilesContent.buttons.RemoveAt(i);
         }
         UpdateTiles();
     }
 
-    public void StepOnButton(Vector2Int p_coord) {
-        foreach (SOTilesContent.Button button in m_tilesContent.buttons) { 
-            if(button.cordinates == p_coord) button.script.PressOnMe();
-        }
-
+    public void AddPressedButton() {
+        m_numberOfPressedButton++;
         CheckForButtonActivation();
     }
 
-    public void StepOutOfButton(Vector2Int p_coord) {
-        foreach (SOTilesContent.Button button in m_tilesContent.buttons) { 
-            if(button.cordinates == p_coord) button.script.LetGoOfMe();
-        }
+    public void RemovePressedButton() {
+        m_numberOfPressedButton--;
     }
 
     private void CheckForButtonActivation() {
-        foreach (SOTilesContent.Button button in m_tilesContent.buttons) {
-            if (!button.script.isPressed) return;
-        }
+        if (m_numberOfPressedButton < m_tilesContent.buttons.Count) return;
+        
         
         Debug.LogWarning("All buttons are pressed !");
     }

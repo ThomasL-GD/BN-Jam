@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Tiles;
 using UnityEngine;
 
 public class CharacterController : MonoBehaviour {
@@ -28,6 +27,7 @@ public class CharacterController : MonoBehaviour {
     private Direction[] m_clonePath = null;
     private int m_clonePathCurrentIndex = 0;
     private bool m_haveToReset = false;
+    private LineRenderer m_trail;
 
     [SerializeField] private Side m_side;
     [SerializeField] private Transform m_clone;
@@ -73,6 +73,8 @@ public class CharacterController : MonoBehaviour {
     }
 
     private void Start() {
+        m_trail = TryGetComponent(out LineRenderer line) ? line : gameObject.AddComponent<LineRenderer>();
+        
         m_myPos = new Vector2IntC() { coo = m_startPos };
         Vector3 newPos = m_board.PositionFromCoordinates(m_startPos.x, m_startPos.y);
         Transform transform1 = transform;
@@ -80,6 +82,9 @@ public class CharacterController : MonoBehaviour {
         position = new Vector3(newPos.x, position.y, newPos.z);
         transform1.position = position;
         m_yOffset = position.y;
+
+        m_trail.positionCount = 1;
+        m_trail.SetPosition(0, position);
     }
 
     // Update is called once per frame
@@ -156,7 +161,7 @@ public class CharacterController : MonoBehaviour {
                     else {
                         Tile targetTypeTile = m_board.WhatIsOnThisTile(cloneTargetPos.x, cloneTargetPos.y);
                         if (targetTypeTile == Tile.Button) {
-                            m_board.StepOnButton(new Vector2Int(cloneTargetPos.x, cloneTargetPos.y));
+                            ButtonOnGroundBehaviour.ISteppedOnAButton?.Invoke(new Vector2Int(cloneTargetPos.x, cloneTargetPos.y));
                             m_isCloneSteppingOnButton = true;
                         }
                         
@@ -169,7 +174,7 @@ public class CharacterController : MonoBehaviour {
                 MoveMeTo(dir); // <<<<<<<<<<<<<<<<<<<<<<<MOVE MYSELF<<<<<<<<<<<<<<<<<<<<<<<<
                 
                 if (targetTile == Tile.Button) {
-                    m_board.StepOnButton(new Vector2Int(targetPos.x, targetPos.y));
+                    ButtonOnGroundBehaviour.ISteppedOnAButton?.Invoke(new Vector2Int(targetPos.x, targetPos.y));
                     m_isSteppingOnButton = true;
                 }
             }
@@ -183,8 +188,14 @@ public class CharacterController : MonoBehaviour {
     private void BonkMe(int p_xTarget, int p_yTarget) => StartCoroutine(Bonk(p_xTarget, p_yTarget, transform, m_myPos));
 
     IEnumerator MoveTo(Direction p_direction, Transform p_transform, Vector2IntC p_currentPos) {
-        if (p_transform == transform) m_isMeMoving = true;
-        else if (p_transform == m_clone) m_isCloneMoving = true;
+        bool isClone = false;
+        if (p_transform == transform) {
+            isClone = false;
+            m_isMeMoving = true;
+        }else if (p_transform == m_clone) {
+            isClone = true;
+            m_isCloneMoving = true;
+        }
         
         Vector2Int targetPosDir;
         switch (p_direction) {
@@ -206,8 +217,8 @@ public class CharacterController : MonoBehaviour {
                 break;
         }
         
-        if(m_isSteppingOnButton || p_transform == transform) m_board.StepOutOfButton(new Vector2Int(p_currentPos.coo.x, p_currentPos.coo.y));
-        if(m_isCloneSteppingOnButton || p_transform == m_clone) m_board.StepOutOfButton(new Vector2Int(p_currentPos.coo.x, p_currentPos.coo.y));
+        if(m_isSteppingOnButton || !isClone) ButtonOnGroundBehaviour.ISteppedOutOfAButton?.Invoke(new Vector2Int(p_currentPos.coo.x, p_currentPos.coo.y));
+        if(m_isCloneSteppingOnButton || isClone) ButtonOnGroundBehaviour.ISteppedOutOfAButton?.Invoke(new Vector2Int(p_currentPos.coo.x, p_currentPos.coo.y));
         
         
         Vector3 originalPosGrid = m_board.PositionFromCoordinates(p_currentPos.coo.x, p_currentPos.coo.y);
@@ -215,6 +226,13 @@ public class CharacterController : MonoBehaviour {
         Vector3 targetPosGrid = m_board.PositionFromCoordinates(targetPosDir.x, targetPosDir.y);
         Vector3 targetPos = new Vector3(targetPosGrid.x, m_yOffset, targetPosGrid.z);
         Vector3 direction = targetPos - originalPos;
+        
+        if(!isClone){ //Trail Update
+            int positionCount = m_trail.positionCount;
+            positionCount++;
+            m_trail.positionCount = positionCount;
+            m_trail.SetPosition(positionCount - 1, originalPos);
+        }
         
         float elapsedTime = 0f;
         
@@ -225,14 +243,22 @@ public class CharacterController : MonoBehaviour {
 
             Vector3 newPos = originalPos + direction * ratio;
             p_transform.position = new Vector3(newPos.x, m_yOffset, newPos.z);
+            if(!isClone) m_trail.SetPosition(m_trail.positionCount - 1, newPos);
         }
         
         m_isSteppingOnButton = false;
 
         p_currentPos.coo = targetPosDir;
         p_transform.position = targetPos;
-        if (p_transform == transform) m_isMeMoving = false;
-        else if (p_transform == m_clone) m_isCloneMoving = false;
+        switch (isClone) {
+            case false:
+                m_isMeMoving = false;
+                m_trail.SetPosition(m_trail.positionCount - 1, targetPos);
+                break;
+            case true:
+                m_isCloneMoving = false;
+                break;
+        }
     }
 
     IEnumerator Bonk(int p_xTarget, int p_yTarget, Transform p_transform, Vector2IntC p_currentPos) {
@@ -280,7 +306,11 @@ public class CharacterController : MonoBehaviour {
         m_clonePathCurrentIndex = 0;
 
         m_myPos.coo = m_startPos;
-        transform.position = m_board.PositionFromCoordinates(m_myPos.coo.x, m_myPos.coo.y) + Vector3.up * m_yOffset;
+        Transform transform1 = transform;
+        transform1.position = m_board.PositionFromCoordinates(m_myPos.coo.x, m_myPos.coo.y) + Vector3.up * m_yOffset;
+
+        m_trail.positionCount = 1;
+        m_trail.SetPosition(0, transform1.position);
 
         m_haveToReset = true;
     }
