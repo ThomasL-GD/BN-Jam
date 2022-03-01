@@ -10,7 +10,7 @@ public class ButtonOnGroundBehaviour : MonoBehaviour {
     [HideInInspector] public Vector2Int coordinates;
     [HideInInspector] public BoardBehavior m_board;
 
-    [SerializeField] private int[] m_materialIDToChange = new int[1] { 0 };
+    [SerializeField] private int m_materialIDToChange = 1;
     [SerializeField] private Material m_pressedMaterial;
     private Material m_defaultMaterial;
     [SerializeField] private MeshRenderer m_meshRenderer = null;
@@ -22,7 +22,7 @@ public class ButtonOnGroundBehaviour : MonoBehaviour {
 
     private void Start() {
         m_meshRenderer = GetComponent<MeshRenderer>();
-        m_defaultMaterial = m_meshRenderer.materials[m_materialIDToChange[0]];
+        m_defaultMaterial = m_meshRenderer.materials[m_materialIDToChange];
         ISteppedOnAButton += AmIPressedOn;
         ISteppedOutOfAButton += AmILetGo;
     }
@@ -37,17 +37,17 @@ public class ButtonOnGroundBehaviour : MonoBehaviour {
 
     private void PressOnMe() {
         isPressed = true;
-        foreach (int i in m_materialIDToChange) {
-            m_meshRenderer.material = m_pressedMaterial;
-        }
+        Material[] mats = m_meshRenderer.materials;
+        mats[m_materialIDToChange] = m_pressedMaterial;
+        m_meshRenderer.materials = mats;
         m_board.AddPressedButton();
     }
 
     private void LetGoOfMe() {
         isPressed = false;
-        foreach (int i in m_materialIDToChange) {
-            m_meshRenderer.material = m_defaultMaterial;
-        }
+        Material[] mats = m_meshRenderer.materials;
+        mats[m_materialIDToChange] = m_defaultMaterial;
+        m_meshRenderer.materials = mats;
         m_board.RemovePressedButton();
     }
 

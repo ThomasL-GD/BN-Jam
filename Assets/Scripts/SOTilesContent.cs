@@ -18,4 +18,6 @@ public class SOTilesContent : ScriptableObject {
     public List<Vector2Int> walls;
     
     public List<Vector2Int> buttons;
+    
+    public List<Vector2Int> chests;
 }
