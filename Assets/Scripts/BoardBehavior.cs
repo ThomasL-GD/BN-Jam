@@ -67,6 +67,68 @@ public class BoardBehavior : MonoBehaviour {
         foreach (Vector2Int coordinates in m_tilesContent.buttons) {
             m_tiles[coordinates.x, coordinates.y] = Tile.Button;
         }
+        foreach (Vector2Int coordinates in m_tilesContent.chests) {
+            m_tiles[coordinates.x, coordinates.y] = Tile.Chest;
+        }
+    }
+
+    public Vector3 PositionFromCoordinates(int p_x, int p_y) {
+        Transform transform1 = transform;
+        return m_localOriginPosition + (transform1.right * (m_sizeOfATile * (p_x + 0.5f))) + (transform1.forward * (m_sizeOfATile * (p_y + 0.5f)));
+    }
+
+    public Tile WhatIsOnThisTile(int p_x, int p_y) {
+        return m_tiles[p_x, p_y];
+    }
+
+    public void SetTileWall(Vector2Int p_coord) {
+        m_tilesContent.walls.Add(p_coord);
+        UpdateTiles();
+    }
+
+    public void SetTileButton(Vector2Int p_coord, ButtonOnGroundBehaviour p_script) {
+        p_script.coordinates = p_coord;
+        p_script.m_board = this;
+        m_tilesContent.buttons.Add(p_coord);
+        UpdateTiles();
+    }
+
+    public void SetTileChest(Vector2Int p_coord, ChestBehavior p_script) {
+        p_script.coordinates = p_coord;
+        p_script.m_board = this;
+        m_tilesContent.chests.Add(p_coord);
+        UpdateTiles();
+    }
+    
+    public void SetTileClear(Vector2Int p_coord){
+        for (int i = 0; i < m_tilesContent.walls.Count; i++) {
+            if(m_tilesContent.walls[i] == p_coord) m_tilesContent.walls.RemoveAt(i);
+        }
+        for (int i = 0; i < m_tilesContent.buttons.Count; i++) {
+            if(m_tilesContent.buttons[i] == p_coord) m_tilesContent.buttons.RemoveAt(i);
+        }
+        UpdateTiles();
+    }
+
+    public void AddPressedButton() {
+        m_numberOfPressedButton++;
+        CheckForButtonActivation();
+    }
+
+    public void RemovePressedButton() {
+        m_numberOfPressedButton--;
+    }
+
+    private void CheckForButtonActivation() {
+        if (m_numberOfPressedButton < m_tilesContent.buttons.Count) return;
+        
+        ChestBehavior.OnChestUnlock?.Invoke(this);
+        isChestUnlocked = true;
+        Debug.LogWarning("All buttons are pressed !");
+    }
+
+    public void Win() {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1); 
     }
 
 
@@ -89,8 +151,9 @@ public class BoardBehavior : MonoBehaviour {
         if(m_tiles != null) {
             for (int i = 0; i < m_tiles.GetLength(0); i++) {
                 for (int j = 0; j < m_tiles.GetLength(1); j++) {
-                    if (m_tiles[i, j] == Tile.Bloc) DrawGizmoTile(new Vector2Int(x: i, y: j), 1f, Color.yellow);
+                    if (m_tiles[i, j] == Tile.Bloc) DrawGizmoTile(new Vector2Int(x: i, y: j), 1f, new Color(0.9f, 0.4f, 0.2f));
                     if (m_tiles[i, j] == Tile.Button) DrawGizmoTile(new Vector2Int(x: i, y: j), 0.2f, Color.green);
+                    if (m_tiles[i, j] == Tile.Chest) DrawGizmoTile(new Vector2Int(x: i, y: j), 1.2f, Color.yellow);
                 }
             }
         }
@@ -131,64 +194,5 @@ public class BoardBehavior : MonoBehaviour {
         Gizmos.DrawLine(topLeft, bottomLeft);
         Gizmos.DrawLine(bottomLeft, bottomRight);
         Gizmos.DrawLine(bottomRight, topRight);
-    }
-
-    public Vector3 PositionFromCoordinates(int p_x, int p_y) {
-        Transform transform1 = transform;
-        return m_localOriginPosition + (transform1.right * (m_sizeOfATile * (p_x + 0.5f))) + (transform1.forward * (m_sizeOfATile * (p_y + 0.5f)));
-    }
-
-    public Tile WhatIsOnThisTile(int p_x, int p_y) {
-        return m_tiles[p_x, p_y];
-    }
-
-    public void SetTileWall(Vector2Int p_coord) {
-        m_tilesContent.walls.Add(p_coord);
-        UpdateTiles();
-    }
-
-    public void SetTileButton(Vector2Int p_coord, ButtonOnGroundBehaviour p_script) {
-        p_script.coordinates = p_coord;
-        p_script.m_board = this;
-        m_tilesContent.buttons.Add(p_coord);
-        UpdateTiles();
-    }
-
-    public void SetTileChest(Vector2Int p_coord, ChestBehavior p_script) {
-        p_script.coordinates = p_coord;
-        p_script.m_board = this;
-        m_tilesContent.buttons.Add(p_coord);
-        UpdateTiles();
-    }
-    
-    public void SetTileClear(Vector2Int p_coord){
-        for (int i = 0; i < m_tilesContent.walls.Count; i++) {
-            if(m_tilesContent.walls[i] == p_coord) m_tilesContent.walls.RemoveAt(i);
-        }
-        for (int i = 0; i < m_tilesContent.buttons.Count; i++) {
-            if(m_tilesContent.buttons[i] == p_coord) m_tilesContent.buttons.RemoveAt(i);
-        }
-        UpdateTiles();
-    }
-
-    public void AddPressedButton() {
-        m_numberOfPressedButton++;
-        CheckForButtonActivation();
-    }
-
-    public void RemovePressedButton() {
-        m_numberOfPressedButton--;
-    }
-
-    private void CheckForButtonActivation() {
-        if (m_numberOfPressedButton < m_tilesContent.buttons.Count) return;
-        
-        ChestBehavior.OnChestUnlock?.Invoke(this);
-        isChestUnlocked = true;
-        Debug.LogWarning("All buttons are pressed !");
-    }
-
-    public void Win() {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1); 
     }
 }
