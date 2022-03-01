@@ -1,39 +1,63 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+using Tiles;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class BoardBehavior : MonoBehaviour {
 
-    [SerializeField] [Range(2,20)] private int m_numberOfXTiles = 2;
-    [SerializeField] [Range(2,20)] private int m_numberOfYTiles = 2;
+    [SerializeField,HideInInspector] private int m_numberOfXTiles = 2;
+    public int numberOfXTiles => m_numberOfXTiles;
+    [SerializeField,HideInInspector] private int m_numberOfYTiles = 2;
+    public int numberOfYTiles => m_numberOfYTiles;
 
-    [SerializeField] private Vector2 m_dimensions;
+    [SerializeField,HideInInspector] private Vector2 m_dimensions;
     private Vector3 m_localOriginPosition;
 
     private float m_sizeOfATile;
 
+    [SerializeField, HideInInspector] private SOTilesContent m_tilesContent;
+    private Tile[,] m_tiles;
+    
+#if UNITY_EDITOR
+    [SerializeField, HideInInspector] private Vector2Int m_selectedTile;
+    
+    [SerializeField, HideInInspector] private GameObject m_prefabBloc;
+#endif
     private void OnValidate() {
-        CalculateLengths();
+        UpdateTiles();
+        
+        CalculateLengths(false);
     }
 
     private void Start() {
+        UpdateTiles();
+        
         CalculateLengths(true);
+        
+#if UNITY_EDITOR
+        if (m_tiles.GetLength(0) != m_numberOfXTiles) Debug.LogError($"Error with number of X tiles in the SO", this);
+        if (m_tiles.GetLength(1) != m_numberOfYTiles) Debug.LogError($"Error with number of X tiles in the SO", this);
+#endif
     }
 
-    private void CalculateLengths(bool p_mustDisplayErrors = false) {
+    private void CalculateLengths(bool p_mustDisplayErrors = true) {
         float sizeX = m_dimensions.x / (float)m_numberOfXTiles;
         float sizeY = m_dimensions.y / (float)m_numberOfYTiles;
 #if UNITY_EDITOR
-        if (p_mustDisplayErrors && Math.Abs(sizeY - sizeX) > 0.01f) {
-            Debug.LogError($"Error with tile size calculation   x : {sizeX}    y : {sizeY}", this);
-        }
+        if (p_mustDisplayErrors && Math.Abs(sizeY - sizeX) > 0.01f) Debug.LogError($"Error with tile size calculation   x : {sizeX}    y : {sizeY}", this);
 #endif
         m_sizeOfATile = sizeX;
 
         m_localOriginPosition = transform.position - new Vector3(m_dimensions.x/2f, 0f, m_dimensions.y/2f);
+    }
+
+    private void UpdateTiles() {
+        m_tiles ??= new Tile[m_numberOfXTiles, m_numberOfYTiles]; // if null, assign
+
+        for (int i = 0; i < m_tiles.GetLength(0); i++) { for (int j = 0; j < m_tiles.GetLength(1); j++){m_tiles[i,j] = Tile.Empty;} } //Reset
+
+        foreach (Vector2Int coordinates in m_tilesContent.walls) {
+            m_tiles[coordinates.x, coordinates.y] = Tile.Bloc;
+        }
     }
 
 
@@ -54,9 +78,24 @@ public class BoardBehavior : MonoBehaviour {
         for (int i = 1; i < m_numberOfYTiles; i++) {
             Gizmos.DrawLine(PositionFromCoordinates(0, i) - tileDir, PositionFromCoordinates(m_numberOfXTiles, i) - tileDir);
         }
+        
+        if(m_tiles != null) {
+            Gizmos.color = Color.yellow;
+            for (int i = 0; i < m_tiles.GetLength(0); i++) {
+                for (int j = 0; j < m_tiles.GetLength(1); j++) {
+                    if (m_tiles[i, j] == Tile.Bloc) DrawGizmoTile(new Vector2Int(x: i, y: j), 1f);
+                }
+            }
+        }
+
+        foreach (Vector2Int coo in m_tilesContent.walls) {
+            DrawGizmoCross(PositionFromCoordinates(coo.x, coo.y), Color.green);
+        }
+        
+        DrawGizmoTile(m_selectedTile, Color.red);
     }
 
-    
+
     private void DrawGizmoCross(Vector3 p_pos, float p_radius = 1f) => DrawGizmoCross(p_pos, p_radius, Gizmos.color);
     private void DrawGizmoCross(Vector3 p_pos, Color p_color, float p_radius = 1f) => DrawGizmoCross(p_pos, p_radius, p_color);
     private void DrawGizmoCross(Vector3 p_pos, float p_radius, Color p_color) {
@@ -67,8 +106,46 @@ public class BoardBehavior : MonoBehaviour {
         
     }
 
+    
+    private void DrawGizmoTile(Vector2Int p_coordinates, float p_yOffset = 0.1f) => DrawGizmoTile(p_coordinates, p_yOffset, Gizmos.color);
+    private void DrawGizmoTile(Vector2Int p_coordinates, Color p_color, float p_yOffset = 0.1f) => DrawGizmoTile(p_coordinates, p_yOffset, p_color);
+    private void DrawGizmoTile(Vector2Int p_coordinates, float p_yOffset, Color p_color) {
+        Gizmos.color = p_color;
+        
+        Transform transform1 = transform;
+        Vector3 right = transform1.right;
+        Vector3 forward = transform1.forward;
+        
+        Vector3 centerOfTile = PositionFromCoordinates(p_coordinates.x, p_coordinates.y);
+        Vector3 yOffset = Vector3.up * p_yOffset;
+
+        Vector3 topRight = centerOfTile + right * m_sizeOfATile * 0.5f + forward * m_sizeOfATile * 0.5f + yOffset;
+        Vector3 topLeft = centerOfTile - right * m_sizeOfATile * 0.5f + forward * m_sizeOfATile * 0.5f + yOffset;
+        Vector3 bottomRight = centerOfTile + right * m_sizeOfATile * 0.5f - forward * m_sizeOfATile * 0.5f + yOffset;
+        Vector3 bottomLeft = centerOfTile - right * m_sizeOfATile * 0.5f - forward * m_sizeOfATile * 0.5f + yOffset;
+        
+        Gizmos.DrawLine(topRight, topLeft);
+        Gizmos.DrawLine(topLeft, bottomLeft);
+        Gizmos.DrawLine(bottomLeft, bottomRight);
+        Gizmos.DrawLine(bottomRight, topRight);
+    }
+
     public Vector3 PositionFromCoordinates(int p_x, int p_y) {
         Transform transform1 = transform;
         return m_localOriginPosition + (transform1.right * (m_sizeOfATile * (p_x + 0.5f))) + (transform1.forward * (m_sizeOfATile * (p_y + 0.5f)));
+    }
+
+    public Tile WhatIsOnThisTile(int p_x, int p_y) {
+        return m_tiles[p_x, p_y];
+    }
+
+    public void SetTile(Vector2Int p_coord, Tile p_tileType) {
+        if(p_tileType == Tile.Bloc) m_tilesContent.walls.Add(p_coord);
+        else if(p_tileType == Tile.Empty){
+            for (int i = 0; i < m_tilesContent.walls.Count; i++) {
+                if(m_tilesContent.walls[i] == p_coord) m_tilesContent.walls.RemoveAt(i);
+            }
+        }
+        UpdateTiles();
     }
 }
