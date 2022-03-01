@@ -52,7 +52,11 @@ public class BoardBehaviourEditor : Editor {
             ((BoardBehavior)target).SetTileButton(tileSelected.vector2IntValue, go.GetComponent<ButtonOnGroundBehaviour>());
         }
 
-        if (GUILayout.Button("Place a Button")) {
+
+        Space();
+        PropertyField(prefabChest);
+        
+        if (GUILayout.Button("Place THE Chest")) {
             GameObject go = PrefabUtility.InstantiatePrefab(prefabChest.objectReferenceValue) as GameObject;
             if (go != null) go.transform.position = ((BoardBehavior)target).PositionFromCoordinates(tileSelected.vector2IntValue.x, tileSelected.vector2IntValue.y);
             

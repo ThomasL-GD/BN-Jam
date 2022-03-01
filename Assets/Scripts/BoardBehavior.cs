@@ -67,21 +67,19 @@ public class BoardBehavior : MonoBehaviour {
     }
 
 
-    private void OnDrawGizmosSelected() {
+    private void OnDrawGizmos() {
         
         DrawGizmoCross(m_localOriginPosition, Color.magenta, 0.5f);
         
         Transform transform1 = transform;
         Vector3 tileDir = (transform1.right * m_sizeOfATile * 0.5f + transform1.forward * m_sizeOfATile * 0.5f);
-        DrawGizmoCross(PositionFromCoordinates(0, 0), Color.blue, 0.2f);
-        DrawGizmoCross(PositionFromCoordinates(0, 0) + tileDir, Color.cyan, 0.2f);
         
         Gizmos.color = Color.grey;
-        for (int i = 1; i < m_numberOfXTiles; i++) {
+        for (int i = 0; i < m_numberOfXTiles+1; i++) {
             Gizmos.DrawLine(PositionFromCoordinates(i, 0) - tileDir, PositionFromCoordinates(i, m_numberOfYTiles) - tileDir);
         }
         
-        for (int i = 1; i < m_numberOfYTiles; i++) {
+        for (int i = 0; i < m_numberOfYTiles+1; i++) {
             Gizmos.DrawLine(PositionFromCoordinates(0, i) - tileDir, PositionFromCoordinates(m_numberOfXTiles, i) - tileDir);
         }
         
@@ -92,10 +90,6 @@ public class BoardBehavior : MonoBehaviour {
                     if (m_tiles[i, j] == Tile.Button) DrawGizmoTile(new Vector2Int(x: i, y: j), 0.2f, Color.green);
                 }
             }
-        }
-
-        foreach (Vector2Int coo in m_tilesContent.walls) {
-            DrawGizmoCross(PositionFromCoordinates(coo.x, coo.y), 0.5f, Color.yellow);
         }
         
         DrawGizmoTile(m_selectedTile, Color.red);
