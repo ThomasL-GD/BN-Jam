@@ -21,6 +21,7 @@ public class CharacterController : MonoBehaviour {
 
     private int m_posX;
     private int m_posY;
+    private bool m_isSteppingOnButton;
 
     private void Start() {
         Vector3 newPos = m_board.PositionFromCoordinates(m_startPos.x, m_startPos.y);
@@ -60,15 +61,28 @@ public class CharacterController : MonoBehaviour {
         else {
             Tile targetTile = m_board.WhatIsOnThisTile(targetPos.x, targetPos.y);
             if (targetTile == Tile.Bloc) StartCoroutine(Bonk(targetPos.x, targetPos.y));
-            else if(targetTile != Tile.Bloc)StartCoroutine(MoveTo(targetPos.x, targetPos.y));
+            else { //Movement is validated
+                
+                StartCoroutine(MoveTo(targetPos.x, targetPos.y));
+                
+                if (targetTile == Tile.Button) {
+                    m_board.StepOnButton(new Vector2Int(targetPos.x, targetPos.y));
+                    m_isSteppingOnButton = true;
+                }
+            }
         }
     }
 
     IEnumerator MoveTo(int p_xTarget, int p_yTarget) {
         m_isMoving = true;
+        
+        if(m_isSteppingOnButton) m_board.StepOutOfButton(new Vector2Int(m_posX, m_posY));
 
-        Vector3 originalPos = m_board.PositionFromCoordinates(m_posX, m_posY);
-        Vector3 targetPos = m_board.PositionFromCoordinates(p_xTarget, p_yTarget);
+        Vector3 position = transform.position;
+        Vector3 originalPosGrid = m_board.PositionFromCoordinates(m_posX, m_posY);
+        Vector3 originalPos = new Vector3(originalPosGrid.x, position.y, originalPosGrid.z);
+        Vector3 targetPosGrid = m_board.PositionFromCoordinates(p_xTarget, p_yTarget);
+        Vector3 targetPos = new Vector3(targetPosGrid.x, position.y, targetPosGrid.z);
         Vector3 direction = targetPos - originalPos;
         
         float elapsedTime = 0f;
@@ -82,6 +96,8 @@ public class CharacterController : MonoBehaviour {
             Transform transform1 = transform;
             transform1.position = new Vector3(newPos.x, transform1.position.y, newPos.z);
         }
+        
+        m_isSteppingOnButton = false;
 
         m_posX = p_xTarget;
         m_posY = p_yTarget;

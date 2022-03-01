@@ -21,6 +21,7 @@ public class BoardBehavior : MonoBehaviour {
     [SerializeField, HideInInspector] private Vector2Int m_selectedTile;
     
     [SerializeField, HideInInspector] private GameObject m_prefabBloc;
+    [SerializeField, HideInInspector] private GameObject m_prefabButton;
 #endif
     private void OnValidate() {
         UpdateTiles();
@@ -58,6 +59,9 @@ public class BoardBehavior : MonoBehaviour {
         foreach (Vector2Int coordinates in m_tilesContent.walls) {
             m_tiles[coordinates.x, coordinates.y] = Tile.Bloc;
         }
+        foreach (SOTilesContent.Button button in m_tilesContent.buttons) {
+            m_tiles[button.cordinates.x, button.cordinates.y] = Tile.Button;
+        }
     }
 
 
@@ -80,16 +84,16 @@ public class BoardBehavior : MonoBehaviour {
         }
         
         if(m_tiles != null) {
-            Gizmos.color = Color.yellow;
             for (int i = 0; i < m_tiles.GetLength(0); i++) {
                 for (int j = 0; j < m_tiles.GetLength(1); j++) {
-                    if (m_tiles[i, j] == Tile.Bloc) DrawGizmoTile(new Vector2Int(x: i, y: j), 1f);
+                    if (m_tiles[i, j] == Tile.Bloc) DrawGizmoTile(new Vector2Int(x: i, y: j), 1f, Color.yellow);
+                    if (m_tiles[i, j] == Tile.Button) DrawGizmoTile(new Vector2Int(x: i, y: j), 0.2f, Color.green);
                 }
             }
         }
 
         foreach (Vector2Int coo in m_tilesContent.walls) {
-            DrawGizmoCross(PositionFromCoordinates(coo.x, coo.y), Color.green);
+            DrawGizmoCross(PositionFromCoordinates(coo.x, coo.y), 0.5f, Color.yellow);
         }
         
         DrawGizmoTile(m_selectedTile, Color.red);
@@ -139,13 +143,45 @@ public class BoardBehavior : MonoBehaviour {
         return m_tiles[p_x, p_y];
     }
 
-    public void SetTile(Vector2Int p_coord, Tile p_tileType) {
-        if(p_tileType == Tile.Bloc) m_tilesContent.walls.Add(p_coord);
-        else if(p_tileType == Tile.Empty){
-            for (int i = 0; i < m_tilesContent.walls.Count; i++) {
-                if(m_tilesContent.walls[i] == p_coord) m_tilesContent.walls.RemoveAt(i);
-            }
+    public void SetTileWall(Vector2Int p_coord) {
+        m_tilesContent.walls.Add(p_coord);
+        UpdateTiles();
+    }
+
+    public void SetTileButton(Vector2Int p_coord, ButtonBehaviour p_script) {
+        m_tilesContent.buttons.Add(new SOTilesContent.Button(){cordinates = p_coord, script = p_script});
+        UpdateTiles();
+    }
+    
+    public void SetTileClear(Vector2Int p_coord){
+        for (int i = 0; i < m_tilesContent.walls.Count; i++) {
+            if(m_tilesContent.walls[i] == p_coord) m_tilesContent.walls.RemoveAt(i);
+        }
+        for (int i = 0; i < m_tilesContent.buttons.Count; i++) {
+            if(m_tilesContent.buttons[i].cordinates == p_coord) m_tilesContent.buttons.RemoveAt(i);
         }
         UpdateTiles();
+    }
+
+    public void StepOnButton(Vector2Int p_coord) {
+        foreach (SOTilesContent.Button button in m_tilesContent.buttons) { 
+            if(button.cordinates == p_coord) button.script.PressOnMe();
+        }
+
+        CheckForButtonActivation();
+    }
+
+    public void StepOutOfButton(Vector2Int p_coord) {
+        foreach (SOTilesContent.Button button in m_tilesContent.buttons) { 
+            if(button.cordinates == p_coord) button.script.LetGoOfMe();
+        }
+    }
+
+    private void CheckForButtonActivation() {
+        foreach (SOTilesContent.Button button in m_tilesContent.buttons) {
+            if (!button.script.isPressed) return;
+        }
+        
+        Debug.LogWarning("All buttons are pressed !");
     }
 }

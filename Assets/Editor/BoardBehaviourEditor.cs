@@ -18,6 +18,7 @@ public class BoardBehaviourEditor : Editor {
         SerializedProperty dimensions = serializedObject.FindProperty("m_dimensions");
         SerializedProperty tileSelected = serializedObject.FindProperty("m_selectedTile");
         SerializedProperty prefabBloc = serializedObject.FindProperty("m_prefabBloc");
+        SerializedProperty prefabButton = serializedObject.FindProperty("m_prefabButton");
         SerializedProperty tilesContent = serializedObject.FindProperty("m_tilesContent");
         
         PropertyField(tilesContent);
@@ -38,11 +39,21 @@ public class BoardBehaviourEditor : Editor {
                 GameObject go = PrefabUtility.InstantiatePrefab(prefabBloc.objectReferenceValue) as GameObject;
                 if (go != null) go.transform.position = ((BoardBehavior)target).PositionFromCoordinates(tileSelected.vector2IntValue.x, tileSelected.vector2IntValue.y);
             }
-            ((BoardBehavior)target).SetTile(tileSelected.vector2IntValue, Tile.Bloc);
+            ((BoardBehavior)target).SetTileWall(tileSelected.vector2IntValue);
+        }
+
+        Space();
+        PropertyField(prefabButton);
+
+        if (GUILayout.Button("Place a Button")) {
+            GameObject go = PrefabUtility.InstantiatePrefab(prefabButton.objectReferenceValue) as GameObject;
+            if (go != null) go.transform.position = ((BoardBehavior)target).PositionFromCoordinates(tileSelected.vector2IntValue.x, tileSelected.vector2IntValue.y);
+            
+            ((BoardBehavior)target).SetTileButton(tileSelected.vector2IntValue, go.GetComponent<ButtonBehaviour>());
         }
 
         if (GUILayout.Button("Clear Tile")) {
-            ((BoardBehavior)target).SetTile(tileSelected.vector2IntValue, Tile.Empty);
+            ((BoardBehavior)target).SetTileClear(tileSelected.vector2IntValue);
         }
         
         serializedObject.ApplyModifiedProperties();
