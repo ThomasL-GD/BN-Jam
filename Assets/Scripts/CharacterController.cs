@@ -98,33 +98,41 @@ public class CharacterController : MonoBehaviour {
         
         if(!m_isAvailableForMovement) return; //Return
 
-        Direction newDir = Direction.Up;
+        Direction newDir = m_directionFacing;
 
-        if (Input.GetKeyDown(m_upKey)) {
+        if (Input.GetKey(m_upKey)) {
             newDir = Direction.Up;
         }
-        else if (Input.GetKeyDown(m_leftKey)) {
+        else if (Input.GetKey(m_leftKey)) {
             newDir = Direction.Left;
         }
-        else if (Input.GetKeyDown(m_downKey)) {
+        else if (Input.GetKey(m_downKey)) {
             newDir = Direction.Down;
         }
-        else if (Input.GetKeyDown(m_rightKey)) {
+        else if (Input.GetKey(m_rightKey)) {
             newDir = Direction.Right;
         }
 
         if (newDir != m_directionFacing) {
             //If it's a 180° flip
-            if(((int)newDir + (int)m_directionFacing)%2 == 0) transform.Rotate(Vector3.up, 180);
+            if(((int)newDir + (int)m_directionFacing)%2 == 0) {
+                transform.Rotate(Vector3.up, 180);
+                Debug.Log("180 flip");
+            }
             else {//If it's a 90° flip
-                //If it's a clockwise 90° turn
-                if ((int)newDir > (int)m_directionFacing || (newDir == Direction.Up && m_directionFacing == Direction.Right)) transform.Rotate(Vector3.up, -90);
                 //If it's a counter-clockwise 90° turn
+                if (((int)newDir > (int)m_directionFacing || (newDir == Direction.Up && m_directionFacing == Direction.Right)) && !(newDir == Direction.Right && m_directionFacing == Direction.Up)) {
+                    transform.Rotate(Vector3.up, -90);
+                    Debug.Log("counter-clockwise 90° turn");
+                }
+                //If it's a clockwise 90° turn
                 else transform.Rotate(Vector3.up, 90);
+                Debug.Log("clockwise 90° turn");
             }
         }
 
         m_directionFacing = newDir; //Assignation
+        Debug.Log($"m_directionFacing : {m_directionFacing}");
 
         if (!Input.GetKey(m_moveKey)) return; //Return
 
