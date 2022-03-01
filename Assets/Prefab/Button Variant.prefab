@@ -97,5 +97,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isPressed: 0
+  coordinates: {x: 3, y: 1}
+  m_board: {fileID: 0}
   m_materialIDToChange: 00000000
   m_pressedMaterial: {fileID: 2100000, guid: 5fda984f243090748a35a1e46b1883cc, type: 2}
+  m_meshRenderer: {fileID: 0}

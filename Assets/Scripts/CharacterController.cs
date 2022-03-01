@@ -11,10 +11,10 @@ public class CharacterController : MonoBehaviour {
     }
 
     private enum Direction {
-        Up,
-        Left,
-        Down,
-        Right
+        Up = 0,
+        Left = 1,
+        Down = 2,
+        Right = 3
     }
 
     private class Vector2IntC {
@@ -34,12 +34,16 @@ public class CharacterController : MonoBehaviour {
     private Vector2IntC m_clonePos;
 
     [Space, Header("Keys")]
+    [SerializeField] private KeyCode m_moveKey;
+    [Space]
     [SerializeField] private KeyCode m_upKey;
     [SerializeField] private KeyCode m_leftKey;
     [SerializeField] private KeyCode m_downKey;
     [SerializeField] private KeyCode m_rightKey;
     [Space]
     [SerializeField] private KeyCode m_resetKey;
+
+    private Direction m_directionFacing = Direction.Down;
 
     [Space, Header("Timings")]
     [SerializeField] [Range(0.01f, 1f)] private float m_movementDuration = 0.2f;
@@ -94,37 +98,73 @@ public class CharacterController : MonoBehaviour {
         
         if(!m_isAvailableForMovement) return; //Return
 
-        bool keyPressed = false;
-        Vector2Int targetPos = m_myPos.coo;
-        Direction dir = Direction.Up;
+        Direction newDir = Direction.Up;
 
-        if (Input.GetKey(m_upKey)) {
-            targetPos = new Vector2Int(m_myPos.coo.x, m_myPos.coo.y - 1);
-            dir = Direction.Up;
-            keyPressed = true;
+        if (Input.GetKeyDown(m_upKey)) {
+            newDir = Direction.Up;
         }
-        else if (Input.GetKey(m_leftKey)) {
-            targetPos = new Vector2Int(m_myPos.coo.x + 1, m_myPos.coo.y);
-            dir = Direction.Left;
-            keyPressed = true;
+        else if (Input.GetKeyDown(m_leftKey)) {
+            newDir = Direction.Left;
         }
-        else if (Input.GetKey(m_downKey)) {
-            targetPos = new Vector2Int(m_myPos.coo.x, m_myPos.coo.y + 1);
-            dir = Direction.Down;
-            keyPressed = true;
+        else if (Input.GetKeyDown(m_downKey)) {
+            newDir = Direction.Down;
         }
-        else if (Input.GetKey(m_rightKey)) {
-            targetPos = new Vector2Int(m_myPos.coo.x - 1, m_myPos.coo.y);
-            dir = Direction.Right;
-            keyPressed = true;
+        else if (Input.GetKeyDown(m_rightKey)) {
+            newDir = Direction.Right;
         }
 
-        if (!keyPressed) return; //Return
+        if (newDir != m_directionFacing) {
+            //If it's a 180° flip
+            if(((int)newDir + (int)m_directionFacing)%2 == 0) transform.Rotate(Vector3.up, 180);
+            else {//If it's a 90° flip
+                //If it's a clockwise 90° turn
+                if ((int)newDir > (int)m_directionFacing || (newDir == Direction.Up && m_directionFacing == Direction.Right)) transform.Rotate(Vector3.up, -90);
+                //If it's a counter-clockwise 90° turn
+                else transform.Rotate(Vector3.up, 90);
+            }
+        }
+
+        m_directionFacing = newDir; //Assignation
+
+        if (!Input.GetKey(m_moveKey)) return; //Return
+
+        Vector2Int targetPos;
+
+        switch (m_directionFacing) {
+            case Direction.Up:
+                targetPos = new Vector2Int(m_myPos.coo.x, m_myPos.coo.y - 1);
+                break;
+            case Direction.Left:
+                targetPos = new Vector2Int(m_myPos.coo.x + 1, m_myPos.coo.y);
+                break;
+            case Direction.Down:
+                targetPos = new Vector2Int(m_myPos.coo.x, m_myPos.coo.y + 1);
+                break;
+            case Direction.Right:
+                targetPos = new Vector2Int(m_myPos.coo.x - 1, m_myPos.coo.y);
+                break;
+            default:
+                targetPos = m_myPos.coo;
+#if UNITY_EDITOR
+                Debug.LogWarning("Facing no direction ? ", this);
+#endif
+            break;
+        }
         
         if(targetPos.x < 0 || targetPos.y < 0 || targetPos.x > m_board.numberOfXTiles -1 || targetPos.y > m_board.numberOfYTiles -1) BonkMe(targetPos.x, targetPos.y);
         else {
             Tile targetTile = m_board.WhatIsOnThisTile(targetPos.x, targetPos.y);
             if (targetTile == Tile.Bloc) BonkMe(targetPos.x, targetPos.y);
+            if (targetTile == Tile.Chest) {
+                switch (m_board.isChestUnlocked) {
+                    case true:
+                        m_board.Win();
+                        break;
+                    case false :
+                        BonkMe(targetPos.x, targetPos.y);
+                        break;
+                }
+            }
             else { //Movement is validated
                 
 
@@ -132,7 +172,7 @@ public class CharacterController : MonoBehaviour {
                     m_myPath.Clear();
                     m_haveToReset = false;
                 }
-                m_myPath.Add(dir); //Record movements
+                m_myPath.Add(m_directionFacing); //Record movements
                 
                 //Move clone
                 if(m_clonePath != null && m_clonePathCurrentIndex < m_clonePath.Length) {
@@ -158,10 +198,11 @@ public class CharacterController : MonoBehaviour {
                     }
                     if(cloneTargetPos.x < 0 || cloneTargetPos.y < 0 || cloneTargetPos.x > m_board.numberOfXTiles -1 || cloneTargetPos.y > m_board.numberOfYTiles -1) BonkClone(cloneTargetPos.x, cloneTargetPos.y);
                     else if (m_board.WhatIsOnThisTile(cloneTargetPos.x, cloneTargetPos.y) == Tile.Bloc) BonkClone(cloneTargetPos.x, cloneTargetPos.y);
+                    else if (m_board.WhatIsOnThisTile(cloneTargetPos.x, cloneTargetPos.y) == Tile.Chest) BonkClone(cloneTargetPos.x, cloneTargetPos.y);
                     else {
                         Tile targetTypeTile = m_board.WhatIsOnThisTile(cloneTargetPos.x, cloneTargetPos.y);
                         if (targetTypeTile == Tile.Button) {
-                            ButtonOnGroundBehaviour.ISteppedOnAButton?.Invoke(new Vector2Int(cloneTargetPos.x, cloneTargetPos.y));
+                            ButtonOnGroundBehaviour.ISteppedOnAButton?.Invoke(new Vector2Int(cloneTargetPos.x, cloneTargetPos.y), m_board);
                             m_isCloneSteppingOnButton = true;
                         }
                         
@@ -171,10 +212,10 @@ public class CharacterController : MonoBehaviour {
                     m_clonePathCurrentIndex++;
                 }
                 
-                MoveMeTo(dir); // <<<<<<<<<<<<<<<<<<<<<<<MOVE MYSELF<<<<<<<<<<<<<<<<<<<<<<<<
+                MoveMeTo(m_directionFacing); // <<<<<<<<<<<<<<<<<<<<<<<MOVE MYSELF<<<<<<<<<<<<<<<<<<<<<<<<
                 
                 if (targetTile == Tile.Button) {
-                    ButtonOnGroundBehaviour.ISteppedOnAButton?.Invoke(new Vector2Int(targetPos.x, targetPos.y));
+                    ButtonOnGroundBehaviour.ISteppedOnAButton?.Invoke(new Vector2Int(targetPos.x, targetPos.y), m_board);
                     m_isSteppingOnButton = true;
                 }
             }
@@ -217,8 +258,8 @@ public class CharacterController : MonoBehaviour {
                 break;
         }
         
-        if(m_isSteppingOnButton || !isClone) ButtonOnGroundBehaviour.ISteppedOutOfAButton?.Invoke(new Vector2Int(p_currentPos.coo.x, p_currentPos.coo.y));
-        if(m_isCloneSteppingOnButton || isClone) ButtonOnGroundBehaviour.ISteppedOutOfAButton?.Invoke(new Vector2Int(p_currentPos.coo.x, p_currentPos.coo.y));
+        if(m_isSteppingOnButton || !isClone) ButtonOnGroundBehaviour.ISteppedOutOfAButton?.Invoke(new Vector2Int(p_currentPos.coo.x, p_currentPos.coo.y), m_board);
+        if(m_isCloneSteppingOnButton || isClone) ButtonOnGroundBehaviour.ISteppedOutOfAButton?.Invoke(new Vector2Int(p_currentPos.coo.x, p_currentPos.coo.y), m_board);
         
         
         Vector3 originalPosGrid = m_board.PositionFromCoordinates(p_currentPos.coo.x, p_currentPos.coo.y);

@@ -15,7 +15,7 @@ public class ButtonOnGroundBehaviour : MonoBehaviour {
     private Material m_defaultMaterial;
     [SerializeField] private MeshRenderer m_meshRenderer = null;
 
-    public delegate void StepButtonDelegator(Vector2Int p_coordinates);
+    public delegate void StepButtonDelegator(Vector2Int p_coordinates, BoardBehavior p_board);
 
     public static StepButtonDelegator ISteppedOnAButton;
     public static StepButtonDelegator ISteppedOutOfAButton;
@@ -27,12 +27,12 @@ public class ButtonOnGroundBehaviour : MonoBehaviour {
         ISteppedOutOfAButton += AmILetGo;
     }
 
-    private void AmIPressedOn(Vector2Int p_coord) {
-        if(CheckForCoordinates(p_coord)) PressOnMe();
+    private void AmIPressedOn(Vector2Int p_coord, BoardBehavior p_board) {
+        if(CheckForCoordinates(p_coord, p_board)) PressOnMe();
     }
 
-    private void AmILetGo(Vector2Int p_coord) {
-        if(CheckForCoordinates(p_coord)) LetGoOfMe();
+    private void AmILetGo(Vector2Int p_coord, BoardBehavior p_board) {
+        if(CheckForCoordinates(p_coord, p_board)) LetGoOfMe();
     }
 
     private void PressOnMe() {
@@ -51,5 +51,10 @@ public class ButtonOnGroundBehaviour : MonoBehaviour {
         m_board.RemovePressedButton();
     }
 
-    private bool CheckForCoordinates(Vector2Int p_potentialCoordinates) => p_potentialCoordinates == coordinates;
+    private bool CheckForCoordinates(Vector2Int p_potentialCoordinates, BoardBehavior p_board) => p_board == m_board && p_potentialCoordinates == coordinates;
+
+    private void OnDestroy() {
+        ISteppedOnAButton -= AmIPressedOn;
+        ISteppedOutOfAButton -= AmILetGo;
+    }
 }
