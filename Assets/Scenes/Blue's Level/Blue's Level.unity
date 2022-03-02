@@ -5933,6 +5933,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ChestSetup
       objectReference: {fileID: 0}
+    - target: {fileID: 4279795658667864605, guid: 2e8a87e6810d69e449cdeac7836541fb, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4808714511335477025, guid: 2e8a87e6810d69e449cdeac7836541fb, type: 3}
       propertyPath: m_RootOrder
       value: 1

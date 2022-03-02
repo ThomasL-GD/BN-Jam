@@ -430,6 +430,10 @@ PrefabInstance:
       propertyPath: m_board
       value: 
       objectReference: {fileID: 874988035}
+    - target: {fileID: 5659196513907829288, guid: 2e8a87e6810d69e449cdeac7836541fb, type: 3}
+      propertyPath: m_leftTilesContent
+      value: 
+      objectReference: {fileID: 11400000, guid: c1d3dd81f850edf459b30cbce1bff88c, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2e8a87e6810d69e449cdeac7836541fb, type: 3}
 --- !u!1001 &198245837

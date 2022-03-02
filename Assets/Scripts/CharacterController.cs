@@ -233,7 +233,7 @@ public class CharacterController : MonoBehaviour {
                             BonkClone(cloneTargetPos.x, cloneTargetPos.y);
                         else {
                             Tile targetTypeTile = m_board.WhatIsOnThisTile(cloneTargetPos.x, cloneTargetPos.y);
-                            if (targetTypeTile == Tile.Button) {
+                            if (targetTypeTile == Tile.Button && cloneTargetPos != targetPos) {
                                 ButtonOnGroundBehaviour.ISteppedOnAButton?.Invoke(
                                     new Vector2Int(cloneTargetPos.x, cloneTargetPos.y), m_board);
                                 m_isCloneSteppingOnButton = true;
