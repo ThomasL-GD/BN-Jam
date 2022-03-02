@@ -52,8 +52,28 @@ PrefabInstance:
       value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 4291072111063189570, guid: 7d612a4e05f363647bb04b784f4ae1e2, type: 3}
+      propertyPath: m_resetKey
+      value: 114
+      objectReference: {fileID: 0}
+    - target: {fileID: 4291072111063189570, guid: 7d612a4e05f363647bb04b784f4ae1e2, type: 3}
       propertyPath: m_rightKey
       value: 275
+      objectReference: {fileID: 0}
+    - target: {fileID: 4291072111063189570, guid: 7d612a4e05f363647bb04b784f4ae1e2, type: 3}
+      propertyPath: m_moveKeys.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4291072111063189570, guid: 7d612a4e05f363647bb04b784f4ae1e2, type: 3}
+      propertyPath: m_moveKeys.Array.data[0]
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 4291072111063189570, guid: 7d612a4e05f363647bb04b784f4ae1e2, type: 3}
+      propertyPath: m_moveKeys.Array.data[1]
+      value: 256
+      objectReference: {fileID: 0}
+    - target: {fileID: 4291072111063189570, guid: 7d612a4e05f363647bb04b784f4ae1e2, type: 3}
+      propertyPath: m_moveKeys.Array.data[2]
+      value: 303
       objectReference: {fileID: 0}
     - target: {fileID: 4325226014561841067, guid: 7d612a4e05f363647bb04b784f4ae1e2, type: 3}
       propertyPath: m_RootOrder

@@ -32,7 +32,7 @@ public class ButtonOnGroundBehaviour : MonoBehaviour {
         m_defaultMaterial = m_meshRenderer.materials[m_materialIDToChange];
         ISteppedOnAButton += AmIPressedOn;
         ISteppedOutOfAButton += AmILetGo;
-        CharacterController.OnReset += Reset;
+        CharacterController.OnReset += p_isBigReset => Reset();
     }
 
     private void AmIPressedOn(Vector2Int p_coord, BoardBehavior p_board) {

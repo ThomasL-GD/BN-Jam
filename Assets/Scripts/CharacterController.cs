@@ -36,7 +36,7 @@ public class CharacterController : MonoBehaviour {
     private Vector2IntC m_clonePos;
 
     [Space, Header("Keys")]
-    [SerializeField] private KeyCode m_moveKey;
+    [SerializeField] private KeyCode[] m_moveKeys;
     [Space]
     [SerializeField] private KeyCode m_upKey;
     [SerializeField] private KeyCode m_leftKey;
@@ -65,12 +65,13 @@ public class CharacterController : MonoBehaviour {
     private bool m_isAvailableForMovement => !(m_isMeMoving || m_isCloneMoving);
 
     private Vector2IntC m_myPos;
+    public Vector2Int pos => m_myPos.coo;
     private bool m_isSteppingOnButton;
     private bool m_isCloneSteppingOnButton;
 
     private float m_yOffset;
 
-    public delegate void OnResetDelegator();
+    public delegate void OnResetDelegator(bool p_isBigReset = false);
 
     public static OnResetDelegator OnReset;
 
@@ -102,7 +103,7 @@ public class CharacterController : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        
+
         if(Input.GetKey(m_resetKey)) {
             if(!m_ignoreInputAtTheBeginning) {
                 m_resetHeldTime += Time.deltaTime;
@@ -151,7 +152,14 @@ public class CharacterController : MonoBehaviour {
 
         m_directionFacing = newDir; //Assignation
 
-        if (!Input.GetKey(m_moveKey)) return; //Return
+        bool moveKeyPressed = false;
+        foreach (KeyCode key in m_moveKeys) {
+            if (!Input.GetKey(key)) continue;
+            moveKeyPressed = true;
+            break;
+        }
+
+        if (!moveKeyPressed) return; //Return
 
         Vector2Int targetPos;
 
@@ -400,6 +408,8 @@ public class CharacterController : MonoBehaviour {
 
     private void BigRestart() {
         m_resetHeldTime = 0f;
+        
+        OnReset?.Invoke(true);
         
         m_myPos = new Vector2IntC() { coo = m_startPos };
         Vector3 newPos = m_board.PositionFromCoordinates(m_startPos.x, m_startPos.y);

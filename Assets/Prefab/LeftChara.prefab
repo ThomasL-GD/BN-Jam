@@ -101,7 +101,7 @@ MonoBehaviour:
   m_isAlone: 0
   m_side: 0
   m_clone: {fileID: 0}
-  m_moveKey: 32
+  m_moveKeys: 20000000
   m_upKey: 122
   m_leftKey: 113
   m_downKey: 115
