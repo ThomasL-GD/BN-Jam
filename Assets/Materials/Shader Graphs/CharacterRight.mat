@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Character
+  m_Name: CharacterRight
   m_Shader: {fileID: -6465566751694194690, guid: c9e85124edc69c84f83c1aa1a58e2ef6, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -33,17 +33,17 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _FresnelPower: 3.3
+    - _FresnelPower: 2.7
     - _GlowSpread: 1.05
-    - _InteriorSpread: 0.81
+    - _InteriorSpread: 0.78
     - _QueueControl: 0
     - _QueueOffset: 0
     - _WobbleDistance: 0.5
     - _WobbleSpeed: 3.28
     - _WoobbleFrequency: 4.4
     m_Colors:
-    - _FresnelColor: {r: 13.487717, g: 9.58001, b: 1.5535588, a: 1}
-    - _InteriorColor: {r: 1367.1202, g: 1367.1202, b: 1367.1202, a: 1}
+    - _FresnelColor: {r: 1.5535588, g: 10.432748, b: 13.487717, a: 1}
+    - _InteriorColor: {r: 186.32245, g: 932.78986, b: 1274.2051, a: 1}
     - _InteriorPosition: {r: 0, g: 0, b: 0, a: 0}
     - _Vector3: {r: 0.05, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
