@@ -49,7 +49,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   coordinates: {x: 0, y: 2}
   m_board: {fileID: 0}
-  m_leftTilesContent: {fileID: 11400000, guid: c1d3dd81f850edf459b30cbce1bff88c, type: 2}
+  m_leftTilesContent: {fileID: 0}
   m_rightTilesContent: {fileID: 0}
   m_chestLid: {fileID: 6988213688255162654}
   m_height: 1.2

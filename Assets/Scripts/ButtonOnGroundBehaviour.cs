@@ -53,6 +53,7 @@ public class ButtonOnGroundBehaviour : MonoBehaviour {
         mats[m_materialIDToChange] = m_pressedMaterial;
         m_meshRenderer.materials = mats;
         s_numberOfPressedButtons++;
+        Debug.Log($"Current number of pressed buttons : {s_numberOfPressedButtons}  :)", this);
         OnButtonPressed?.Invoke(s_numberOfPressedButtons);
     }
 
@@ -62,6 +63,7 @@ public class ButtonOnGroundBehaviour : MonoBehaviour {
         mats[m_materialIDToChange] = m_defaultMaterial;
         m_meshRenderer.materials = mats;
         s_numberOfPressedButtons--;
+        Debug.Log($"Current number of pressed buttons : {s_numberOfPressedButtons}  :(", this);
     }
 
     private bool CheckForCoordinates(Vector2Int p_potentialCoordinates, BoardBehavior p_board) => p_board == m_board && p_potentialCoordinates == coordinates;
