@@ -941,6 +941,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: P_Sand_Block (20)
       objectReference: {fileID: 0}
+    - target: {fileID: 6208517033571268137, guid: be4cfb60244a1e1409b004ad02c7ccdd, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 8b1c4e674d02e4e428ac3e2b8f45eb98, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: be4cfb60244a1e1409b004ad02c7ccdd, type: 3}
 --- !u!4 &462034615 stripped
@@ -1375,6 +1379,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: P_Sand_Block (24)
       objectReference: {fileID: 0}
+    - target: {fileID: 6208517033571268137, guid: be4cfb60244a1e1409b004ad02c7ccdd, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 8b1c4e674d02e4e428ac3e2b8f45eb98, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: be4cfb60244a1e1409b004ad02c7ccdd, type: 3}
 --- !u!4 &690249589 stripped
@@ -1955,6 +1963,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: P_Sand_Block (15)
       objectReference: {fileID: 0}
+    - target: {fileID: 6208517033571268137, guid: be4cfb60244a1e1409b004ad02c7ccdd, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 8b1c4e674d02e4e428ac3e2b8f45eb98, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: be4cfb60244a1e1409b004ad02c7ccdd, type: 3}
 --- !u!4 &1019686792 stripped
@@ -3394,6 +3406,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: P_Sand_Block (11)
       objectReference: {fileID: 0}
+    - target: {fileID: 6208517033571268137, guid: be4cfb60244a1e1409b004ad02c7ccdd, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 8b1c4e674d02e4e428ac3e2b8f45eb98, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: be4cfb60244a1e1409b004ad02c7ccdd, type: 3}
 --- !u!4 &1898063693 stripped
@@ -3828,6 +3844,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: P_Sand_Block (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 6208517033571268137, guid: be4cfb60244a1e1409b004ad02c7ccdd, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 8b1c4e674d02e4e428ac3e2b8f45eb98, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: be4cfb60244a1e1409b004ad02c7ccdd, type: 3}
 --- !u!4 &2066726053 stripped
