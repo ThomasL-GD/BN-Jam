@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Blue's Level2/Niveau 3.unity
     guid: 62c80165b41a4f24f9352225bd267629
+  - enabled: 1
+    path: Assets/Scenes/Blue's Level3/Niveau 4.unity
+    guid: 769db81f47b666546a1ba67a5a04916c
   m_configObjects: {}
