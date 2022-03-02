@@ -33,7 +33,7 @@ public class BoardBehaviourEditor : Editor {
         if (GUILayout.Button("X +1")) tileSelected.vector2IntValue += new Vector2Int(1, 0);
         if (GUILayout.Button("X -1")) tileSelected.vector2IntValue += new Vector2Int(-1, 0);
         if (GUILayout.Button("Y +1")) tileSelected.vector2IntValue += new Vector2Int(0, 1);
-        if (GUILayout.Button("Y -1")) tileSelected.vector2IntValue += new Vector2Int(0, -1);
+        if (GUILayout.Button("Y -1")) tileSelected.vector2IntValue += new Vector2Int(0, -1); //l
 
         Space(20);
         PropertyField(prefabBloc);
