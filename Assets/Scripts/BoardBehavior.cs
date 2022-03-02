@@ -53,7 +53,7 @@ public class BoardBehavior : MonoBehaviour {
     }
 
     private void UpdateTiles() {
-        m_tiles ??= new Tile[m_numberOfXTiles, m_numberOfYTiles]; // if null, assign
+        m_tiles = new Tile[m_numberOfXTiles, m_numberOfYTiles];
 
         for (int i = 0; i < m_tiles.GetLength(0); i++) { for (int j = 0; j < m_tiles.GetLength(1); j++){m_tiles[i,j] = Tile.Empty;} } //Reset
 
