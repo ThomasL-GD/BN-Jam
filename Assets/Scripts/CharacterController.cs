@@ -43,6 +43,7 @@ public class CharacterController : MonoBehaviour {
     [SerializeField] private KeyCode m_rightKey;
     [Space]
     [SerializeField] private KeyCode m_resetKey;
+    [SerializeField] [Range(0.1f, 5f)] private float m_holdTimeToBigReset = 2f;
 
     private Direction m_directionFacing = Direction.Down;
 
@@ -65,6 +66,10 @@ public class CharacterController : MonoBehaviour {
     private bool m_isCloneSteppingOnButton;
 
     private float m_yOffset;
+
+    public delegate void OnResetDelegator();
+
+    public static OnResetDelegator OnReset;
 
     private void Awake() {
         switch (m_side) {
@@ -161,7 +166,7 @@ public class CharacterController : MonoBehaviour {
             Tile targetTile = m_board.WhatIsOnThisTile(targetPos.x, targetPos.y);
             if (targetTile == Tile.Bloc) BonkMe(targetPos.x, targetPos.y);
             else if (targetTile == Tile.Chest) {
-                switch (m_board.isChestUnlocked) {
+                switch (ChestBehavior.isUnlocked) {
                     case true:
                         m_board.Win();
                         break;
@@ -372,6 +377,8 @@ public class CharacterController : MonoBehaviour {
         m_trail.SetPosition(0, transform1.position);
 
         m_haveToReset = true;
+        
+        OnReset?.Invoke();
     }
 
     private void OnDrawGizmos() {

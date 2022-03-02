@@ -1,6 +1,7 @@
 
 using System;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 using UnityEngine.Rendering;
 
 [Serializable]
@@ -15,16 +16,23 @@ public class ButtonOnGroundBehaviour : MonoBehaviour {
     private Material m_defaultMaterial;
     [SerializeField] private MeshRenderer m_meshRenderer = null;
 
+    private static int s_numberOfPressedButtons = 0;
+
     public delegate void StepButtonDelegator(Vector2Int p_coordinates, BoardBehavior p_board);
 
     public static StepButtonDelegator ISteppedOnAButton;
     public static StepButtonDelegator ISteppedOutOfAButton;
+
+    public delegate void CheckIfAllDelegator(int p_numberOfPressedButtons);
+
+    public static CheckIfAllDelegator OnButtonPressed;
 
     private void Start() {
         m_meshRenderer = GetComponent<MeshRenderer>();
         m_defaultMaterial = m_meshRenderer.materials[m_materialIDToChange];
         ISteppedOnAButton += AmIPressedOn;
         ISteppedOutOfAButton += AmILetGo;
+        CharacterController.OnReset += Reset;
     }
 
     private void AmIPressedOn(Vector2Int p_coord, BoardBehavior p_board) {
@@ -35,12 +43,17 @@ public class ButtonOnGroundBehaviour : MonoBehaviour {
         if(CheckForCoordinates(p_coord, p_board)) LetGoOfMe();
     }
 
+    private void Reset() {
+        if(isPressed) LetGoOfMe();
+    }
+
     private void PressOnMe() {
         isPressed = true;
         Material[] mats = m_meshRenderer.materials;
         mats[m_materialIDToChange] = m_pressedMaterial;
         m_meshRenderer.materials = mats;
-        m_board.AddPressedButton();
+        s_numberOfPressedButtons++;
+        OnButtonPressed?.Invoke(s_numberOfPressedButtons);
     }
 
     private void LetGoOfMe() {
@@ -48,7 +61,7 @@ public class ButtonOnGroundBehaviour : MonoBehaviour {
         Material[] mats = m_meshRenderer.materials;
         mats[m_materialIDToChange] = m_defaultMaterial;
         m_meshRenderer.materials = mats;
-        m_board.RemovePressedButton();
+        s_numberOfPressedButtons--;
     }
 
     private bool CheckForCoordinates(Vector2Int p_potentialCoordinates, BoardBehavior p_board) => p_board == m_board && p_potentialCoordinates == coordinates;
@@ -56,5 +69,6 @@ public class ButtonOnGroundBehaviour : MonoBehaviour {
     private void OnDestroy() {
         ISteppedOnAButton -= AmIPressedOn;
         ISteppedOutOfAButton -= AmILetGo;
+        s_numberOfPressedButtons = 0;
     }
 }

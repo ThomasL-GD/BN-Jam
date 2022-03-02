@@ -16,10 +16,6 @@ public class BoardBehavior : MonoBehaviour {
 
     [SerializeField, HideInInspector] private SOTilesContent m_tilesContent;
     private Tile[,] m_tiles;
-
-    private int m_numberOfPressedButton = 0;
-    
-    public bool isChestUnlocked = false;
     
 #if UNITY_EDITOR
     [SerializeField, HideInInspector] private Vector2Int m_selectedTile;
@@ -109,24 +105,7 @@ public class BoardBehavior : MonoBehaviour {
         }
         UpdateTiles();
     }
-
-    public void AddPressedButton() {
-        m_numberOfPressedButton++;
-        CheckForButtonActivation();
-    }
-
-    public void RemovePressedButton() {
-        m_numberOfPressedButton--;
-    }
-
-    private void CheckForButtonActivation() {
-        if (m_numberOfPressedButton < m_tilesContent.buttons.Count) return;
-        
-        ChestBehavior.OnChestUnlock?.Invoke(this);
-        isChestUnlocked = true;
-        Debug.LogWarning("All buttons are pressed !");
-    }
-
+    
     public void Win() {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1); 
     }

@@ -7,25 +7,39 @@ public class ChestBehavior : MonoBehaviour {
 
     [HideInInspector] public Vector2Int coordinates;
     [HideInInspector] public BoardBehavior m_board;
+
+    [SerializeField] private SOTilesContent m_leftTilesContent = null;
+    [SerializeField] private SOTilesContent m_rightTilesContent = null;
     
     [SerializeField] private Transform m_chestLid = null;
     [SerializeField] private float m_height = 2.1f;
     [SerializeField] private float m_animationTime = 2.1f;
     [SerializeField] private float m_lidMaxAngle = 60f;
 
-    public delegate void ChestUnlockDelegator(BoardBehavior p_board);
-
-    public static ChestUnlockDelegator OnChestUnlock;
+    public static bool isUnlocked = false;
 
     private void Start() {
-        OnChestUnlock += Unlock;
+#if UNITY_EDITOR
+        if(m_leftTilesContent == null)Debug.LogError("HEYYYY ! The chest can't work if there is no SoTilesContent serialized, at least for the left one", this);
+        if(m_rightTilesContent == null)Debug.LogWarning("HEYYY ! The chest only have one SoTilesContent serialized, it might cause issues except if there's only one character in the scene", this);
+#endif
+        
+        ButtonOnGroundBehaviour.OnButtonPressed += CheckForWin;
+        isUnlocked = false;
     }
 
-    private void Unlock(BoardBehavior p_board) {
-#if UNITY_EDITOR
-        if(p_board != m_board) Debug.LogError("Chest Unlock Board Error", this);
-#endif
+    private void CheckForWin(int p_numberofpressedbuttons) {
+        if (m_rightTilesContent == null) {
+            if (p_numberofpressedbuttons >= m_leftTilesContent.buttons.Count) Unlock();
+        }
+        else {
+            if(p_numberofpressedbuttons >= (m_leftTilesContent.buttons.Count + m_rightTilesContent.buttons.Count)) Unlock();
+        }
+    }
+
+    private void Unlock() {
         StartCoroutine(GoDownAndOpen());
+        isUnlocked = true;
     }
 
     IEnumerator GoDownAndOpen() {
@@ -48,6 +62,7 @@ public class ChestBehavior : MonoBehaviour {
     }
 
     private void OnDestroy() {
-        OnChestUnlock -= Unlock;
+        ButtonOnGroundBehaviour.OnButtonPressed -= CheckForWin;
+        isUnlocked = false;
     }
 }

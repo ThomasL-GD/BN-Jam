@@ -46,10 +46,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69f1bab6cb4c01842a15aacc7e86ef20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  coordinates: {x: 0, y: 0}
+  coordinates: {x: 0, y: 3}
   m_board: {fileID: 0}
+  m_leftTilesContent: {fileID: 0}
+  m_rightTilesContent: {fileID: 0}
   m_chestLid: {fileID: 6988213688255162654}
-  m_height: 2.1
+  m_height: 1.2
   m_animationTime: 2
   m_lidMaxAngle: 60
 --- !u!1001 &5547476989236210258
