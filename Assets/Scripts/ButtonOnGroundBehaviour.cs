@@ -14,7 +14,7 @@ public class ButtonOnGroundBehaviour : MonoBehaviour {
     [SerializeField] private int m_materialIDToChange = 1;
     [SerializeField] private Material m_pressedMaterial;
     private Material m_defaultMaterial;
-    [SerializeField] private MeshRenderer m_meshRenderer = null;
+    private MeshRenderer m_meshRenderer = null;
 
     private static int s_numberOfPressedButtons = 0;
 
