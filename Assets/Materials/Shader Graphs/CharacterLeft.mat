@@ -42,8 +42,8 @@ Material:
     - _WobbleSpeed: 4.13
     - _WoobbleFrequency: 8.3
     m_Colors:
-    - _FresnelColor: {r: 13.487717, g: 1.5535588, b: 5.3795934, a: 1}
-    - _InteriorColor: {r: 1360.2997, g: 327.61145, b: 869.7128, a: 1}
+    - _FresnelColor: {r: 15.649312, g: 2.1407082, b: 2.1407082, a: 1}
+    - _InteriorColor: {r: 1944.291, g: 247.62198, b: 247.62198, a: 1}
     - _InteriorPosition: {r: 0, g: 0, b: 0, a: 0}
     - _Vector3: {r: 0.05, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
