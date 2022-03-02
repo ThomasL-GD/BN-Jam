@@ -15,9 +15,9 @@ public enum Tile {
 [CreateAssetMenu(fileName = "TilesContent", menuName = "TilesContent")]
 public class SOTilesContent : ScriptableObject {
 
-    public List<Vector2Int> walls;
+    public List<Vector2Int> walls = new List<Vector2Int>();
     
-    public List<Vector2Int> buttons;
+    public List<Vector2Int> buttons = new List<Vector2Int>();
     
-    public List<Vector2Int> chests;
+    public List<Vector2Int> chests = new List<Vector2Int>();
 }
