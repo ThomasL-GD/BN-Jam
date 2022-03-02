@@ -34,6 +34,7 @@ public class ChestBehavior : MonoBehaviour {
             if (p_numberofpressedbuttons >= m_leftTilesContent.buttons.Count) Unlock();
         }
         else {
+            Debug.Log($"There are {p_numberofpressedbuttons} buttons pressed so far", this);
             if(p_numberofpressedbuttons >= (m_leftTilesContent.buttons.Count + m_rightTilesContent.buttons.Count)) Unlock();
         }
     }

@@ -16,6 +16,17 @@ public class BoardBehavior : MonoBehaviour {
 
     [SerializeField, HideInInspector] private SOTilesContent m_tilesContent;
     private Tile[,] m_tiles;
+
+    private struct ButtonActivation {
+        public Vector2Int coord;
+        public bool isPressed;
+        public ButtonActivation(Vector2Int p_coord) {
+            coord = p_coord;
+            isPressed = false;
+        }
+    }
+
+    private ButtonActivation[] m_buttons;
     
 #if UNITY_EDITOR
     [SerializeField, HideInInspector] private Vector2Int m_selectedTile;
@@ -34,6 +45,9 @@ public class BoardBehavior : MonoBehaviour {
         UpdateTiles();
         
         CalculateLengths(true);
+
+        m_buttons = new ButtonActivation[m_tilesContent.buttons.Count];
+        for (int i = 0; i < m_buttons.Length; i++) { m_buttons[i] = new ButtonActivation(m_tilesContent.buttons[i]); } 
         
 #if UNITY_EDITOR
         if (m_tiles.GetLength(0) != m_numberOfXTiles) Debug.LogError($"Error with number of X tiles in the SO", this);
