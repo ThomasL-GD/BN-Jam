@@ -38,9 +38,9 @@ Material:
     - _InteriorSpread: 0
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _WobbleDistance: 0.5
-    - _WobbleSpeed: 2
-    - _WoobbleFrequency: 11.1
+    - _WobbleDistance: 0.6
+    - _WobbleSpeed: 3.81
+    - _WoobbleFrequency: 12.5
     m_Colors:
     - _FresnelColor: {r: 129.03577, g: 129.03577, b: 129.03577, a: 1}
     - _InteriorColor: {r: 1, g: 1, b: 1, a: 1}
