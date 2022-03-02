@@ -33,7 +33,7 @@ public class CharacterController : MonoBehaviour {
     [SerializeField] private bool m_isAlone = false;
     [SerializeField] private Side m_side;
     [SerializeField] private Transform m_clone;
-    private Vector2IntC m_clonePos;
+    private Vector2IntC m_clonePos = null;
 
     [Space, Header("Keys")]
     [SerializeField] private KeyCode[] m_moveKeys;
@@ -265,7 +265,10 @@ public class CharacterController : MonoBehaviour {
     }
 
     private void MoveCloneTo(Direction p_direction) => StartCoroutine(MoveTo(p_direction, m_clone, m_clonePos));
-    private void MoveMeTo(Direction p_direction) => StartCoroutine(MoveTo(p_direction, transform, m_myPos));
+    private void MoveMeTo(Direction p_direction) {
+        Debug.Log($"p_direction : {p_direction}  transform : {transform}  m_myPos : {m_myPos}");
+        StartCoroutine(MoveTo(p_direction, transform, m_myPos));
+    }
     
     private void BonkClone(int p_xTarget, int p_yTarget) { StartCoroutine(Bonk(p_xTarget, p_yTarget, m_clone, m_clonePos)); }
     private void BonkMe(int p_xTarget, int p_yTarget) => StartCoroutine(Bonk(p_xTarget, p_yTarget, transform, m_myPos));
@@ -300,9 +303,15 @@ public class CharacterController : MonoBehaviour {
                 break;
         }
         
-        if(m_isSteppingOnButton || !isClone) ButtonOnGroundBehaviour.ISteppedOutOfAButton?.Invoke(new Vector2Int(p_currentPos.coo.x, p_currentPos.coo.y), m_board);
-        if(m_isCloneSteppingOnButton || isClone) ButtonOnGroundBehaviour.ISteppedOutOfAButton?.Invoke(new Vector2Int(p_currentPos.coo.x, p_currentPos.coo.y), m_board);
+        if((m_isSteppingOnButton && !isClone)) {
+            if (m_clonePath != null && m_clonePos != null && m_clonePos.coo == p_currentPos.coo) { }
+            else{
+                ButtonOnGroundBehaviour.ISteppedOutOfAButton?.Invoke(new Vector2Int(p_currentPos.coo.x, p_currentPos.coo.y), m_board);
+            }
+        }
+        if(m_isCloneSteppingOnButton && isClone) ButtonOnGroundBehaviour.ISteppedOutOfAButton?.Invoke(new Vector2Int(p_currentPos.coo.x, p_currentPos.coo.y), m_board);
         
+        m_isSteppingOnButton = false;
         
         Vector3 originalPosGrid = m_board.PositionFromCoordinates(p_currentPos.coo.x, p_currentPos.coo.y);
         Vector3 originalPos = new Vector3(originalPosGrid.x, m_yOffset, originalPosGrid.z);
@@ -329,7 +338,6 @@ public class CharacterController : MonoBehaviour {
             if(!isClone) m_trail.SetPosition(m_trail.positionCount - 1, newPos);
         }
         
-        m_isSteppingOnButton = false;
 
         p_currentPos.coo = targetPosDir;
         p_transform.position = targetPos;

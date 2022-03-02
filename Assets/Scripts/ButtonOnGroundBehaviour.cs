@@ -7,7 +7,7 @@ using UnityEngine.Rendering;
 [Serializable]
 public class ButtonOnGroundBehaviour : MonoBehaviour {
 
-    [HideInInspector] public bool isPressed = false;
+    public bool isPressed = false;
     [HideInInspector] public Vector2Int coordinates;
     [HideInInspector] public BoardBehavior m_board;
 
