@@ -33,14 +33,14 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _FresnelPower: 1.84
+    - _FresnelPower: 3.3
     - _GlowSpread: 1.05
-    - _InteriorSpread: 0.76
+    - _InteriorSpread: 0.81
     - _QueueControl: 0
     - _QueueOffset: 0
     - _WobbleDistance: 0.5
-    - _WobbleSpeed: 2.8
-    - _WoobbleFrequency: 12.99
+    - _WobbleSpeed: 3.28
+    - _WoobbleFrequency: 4.4
     m_Colors:
     - _FresnelColor: {r: 13.487717, g: 9.58001, b: 1.5535588, a: 1}
     - _InteriorColor: {r: 1367.1202, g: 1367.1202, b: 1367.1202, a: 1}
