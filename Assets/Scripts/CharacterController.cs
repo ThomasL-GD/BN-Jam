@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CharacterController : MonoBehaviour {
 
@@ -44,6 +45,8 @@ public class CharacterController : MonoBehaviour {
     [Space]
     [SerializeField] private KeyCode m_resetKey;
     [SerializeField] [Range(0.1f, 5f)] private float m_holdTimeToBigReset = 2f;
+    private float m_resetHeldTime = 0f;
+    private bool m_ignoreInputAtTheBeginning = true;
 
     private Direction m_directionFacing = Direction.Down;
 
@@ -100,7 +103,19 @@ public class CharacterController : MonoBehaviour {
     // Update is called once per frame
     void Update() {
         
-        if(Input.GetKeyDown(m_resetKey)) Restart();
+        if(Input.GetKey(m_resetKey)) {
+            if(!m_ignoreInputAtTheBeginning) {
+                m_resetHeldTime += Time.deltaTime;
+                if (m_resetHeldTime > m_holdTimeToBigReset) BigRestart();
+            }
+        }
+        if (!m_ignoreInputAtTheBeginning && !Input.GetKey(m_resetKey) && m_resetHeldTime > 0f){
+            if (m_resetHeldTime > m_holdTimeToBigReset) BigRestart();
+            else Restart();
+            m_resetHeldTime = 0f;
+            return;
+        }
+        if (!Input.GetKey(m_resetKey)) m_ignoreInputAtTheBeginning = false;
         
         if(!m_isAvailableForMovement) return; //Return
 
@@ -376,9 +391,35 @@ public class CharacterController : MonoBehaviour {
         m_trail.positionCount = 1;
         m_trail.SetPosition(0, transform1.position);
 
+        if(m_haveToReset) m_myPath.Clear();
         m_haveToReset = true;
         
         OnReset?.Invoke();
+        m_resetHeldTime = 0f;
+    }
+
+    private void BigRestart() {
+        m_resetHeldTime = 0f;
+        
+        m_myPos = new Vector2IntC() { coo = m_startPos };
+        Vector3 newPos = m_board.PositionFromCoordinates(m_startPos.x, m_startPos.y);
+        Transform transform1 = transform;
+        Vector3 position = transform1.position;
+        position = new Vector3(newPos.x, position.y, newPos.z);
+        transform1.position = position;
+
+        m_myPath.Clear();
+        
+        if(!m_isAlone) {
+            m_clonePath = null;
+            m_clone.position = Vector3.down * 1000;
+
+            m_clonePathCurrentIndex = 0;
+        }
+
+        m_trail.positionCount = 1;
+        m_trail.SetPosition(0, position);
+        m_ignoreInputAtTheBeginning = true;
     }
 
     private void OnDrawGizmos() {
