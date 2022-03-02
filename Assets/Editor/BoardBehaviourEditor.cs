@@ -21,7 +21,7 @@ public class BoardBehaviourEditor : Editor {
         SerializedProperty prefabChest = serializedObject.FindProperty("m_prefabChest");
         SerializedProperty tilesContent = serializedObject.FindProperty("m_tilesContent");
         
-        EditorUtility.SetDirty(tilesContent.objectReferenceValue);
+        EditorUtility.SetDirty(tilesContent.objectReferenceValue);//un truc
         
         PropertyField(tilesContent);
         
