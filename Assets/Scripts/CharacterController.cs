@@ -29,6 +29,7 @@ public class CharacterController : MonoBehaviour {
     private bool m_haveToReset = false;
     private LineRenderer m_trail;
 
+    [SerializeField] private bool m_isAlone = false;
     [SerializeField] private Side m_side;
     [SerializeField] private Transform m_clone;
     private Vector2IntC m_clonePos;
@@ -117,22 +118,18 @@ public class CharacterController : MonoBehaviour {
             //If it's a 180° flip
             if(((int)newDir + (int)m_directionFacing)%2 == 0) {
                 transform.Rotate(Vector3.up, 180);
-                Debug.Log("180 flip");
             }
             else {//If it's a 90° flip
                 //If it's a counter-clockwise 90° turn
                 if (((int)newDir > (int)m_directionFacing || (newDir == Direction.Up && m_directionFacing == Direction.Right)) && !(newDir == Direction.Right && m_directionFacing == Direction.Up)) {
                     transform.Rotate(Vector3.up, -90);
-                    Debug.Log("counter-clockwise 90° turn");
                 }
                 //If it's a clockwise 90° turn
                 else transform.Rotate(Vector3.up, 90);
-                Debug.Log("clockwise 90° turn");
             }
         }
 
         m_directionFacing = newDir; //Assignation
-        Debug.Log($"m_directionFacing : {m_directionFacing}");
 
         if (!Input.GetKey(m_moveKey)) return; //Return
 
@@ -163,7 +160,7 @@ public class CharacterController : MonoBehaviour {
         else {
             Tile targetTile = m_board.WhatIsOnThisTile(targetPos.x, targetPos.y);
             if (targetTile == Tile.Bloc) BonkMe(targetPos.x, targetPos.y);
-            if (targetTile == Tile.Chest) {
+            else if (targetTile == Tile.Chest) {
                 switch (m_board.isChestUnlocked) {
                     case true:
                         m_board.Win();
@@ -182,42 +179,51 @@ public class CharacterController : MonoBehaviour {
                 }
                 m_myPath.Add(m_directionFacing); //Record movements
                 
-                //Move clone
-                if(m_clonePath != null && m_clonePathCurrentIndex < m_clonePath.Length) {
+                if(!m_isAlone) {
+                    //Move clone
+                    if (m_clonePath != null && m_clonePathCurrentIndex < m_clonePath.Length) {
 
-                    Vector2Int cloneTargetPos;
-                    switch (m_clonePath[m_clonePathCurrentIndex]) {
-                        case Direction.Up:
-                            cloneTargetPos = new Vector2Int(m_clonePos.coo.x, m_clonePos.coo.y - 1);
-                            break;
-                        case Direction.Left:
-                            cloneTargetPos = new Vector2Int(m_clonePos.coo.x + 1, m_clonePos.coo.y);
-                            break;
-                        case Direction.Down:
-                            cloneTargetPos = new Vector2Int(m_clonePos.coo.x, m_clonePos.coo.y + 1);
-                            break;
-                        case Direction.Right:
-                            cloneTargetPos = new Vector2Int(m_clonePos.coo.x - 1, m_clonePos.coo.y);
-                            break;
-                        default:
-                            cloneTargetPos = new Vector2Int(0,0);
-                            Debug.LogError("No direction assigned to movement", this);
-                            break;
-                    }
-                    if(cloneTargetPos.x < 0 || cloneTargetPos.y < 0 || cloneTargetPos.x > m_board.numberOfXTiles -1 || cloneTargetPos.y > m_board.numberOfYTiles -1) BonkClone(cloneTargetPos.x, cloneTargetPos.y);
-                    else if (m_board.WhatIsOnThisTile(cloneTargetPos.x, cloneTargetPos.y) == Tile.Bloc) BonkClone(cloneTargetPos.x, cloneTargetPos.y);
-                    else if (m_board.WhatIsOnThisTile(cloneTargetPos.x, cloneTargetPos.y) == Tile.Chest) BonkClone(cloneTargetPos.x, cloneTargetPos.y);
-                    else {
-                        Tile targetTypeTile = m_board.WhatIsOnThisTile(cloneTargetPos.x, cloneTargetPos.y);
-                        if (targetTypeTile == Tile.Button) {
-                            ButtonOnGroundBehaviour.ISteppedOnAButton?.Invoke(new Vector2Int(cloneTargetPos.x, cloneTargetPos.y), m_board);
-                            m_isCloneSteppingOnButton = true;
+                        Vector2Int cloneTargetPos;
+                        switch (m_clonePath[m_clonePathCurrentIndex]) {
+                            case Direction.Up:
+                                cloneTargetPos = new Vector2Int(m_clonePos.coo.x, m_clonePos.coo.y - 1);
+                                break;
+                            case Direction.Left:
+                                cloneTargetPos = new Vector2Int(m_clonePos.coo.x + 1, m_clonePos.coo.y);
+                                break;
+                            case Direction.Down:
+                                cloneTargetPos = new Vector2Int(m_clonePos.coo.x, m_clonePos.coo.y + 1);
+                                break;
+                            case Direction.Right:
+                                cloneTargetPos = new Vector2Int(m_clonePos.coo.x - 1, m_clonePos.coo.y);
+                                break;
+                            default:
+                                cloneTargetPos = new Vector2Int(0, 0);
+                                Debug.LogError("No direction assigned to movement", this);
+                                break;
                         }
-                        
-                        MoveCloneTo(m_clonePath[m_clonePathCurrentIndex]);
+
+                        if (cloneTargetPos.x < 0 || cloneTargetPos.y < 0 ||
+                            cloneTargetPos.x > m_board.numberOfXTiles - 1 ||
+                            cloneTargetPos.y > m_board.numberOfYTiles - 1)
+                            BonkClone(cloneTargetPos.x, cloneTargetPos.y);
+                        else if (m_board.WhatIsOnThisTile(cloneTargetPos.x, cloneTargetPos.y) == Tile.Bloc)
+                            BonkClone(cloneTargetPos.x, cloneTargetPos.y);
+                        else if (m_board.WhatIsOnThisTile(cloneTargetPos.x, cloneTargetPos.y) == Tile.Chest)
+                            BonkClone(cloneTargetPos.x, cloneTargetPos.y);
+                        else {
+                            Tile targetTypeTile = m_board.WhatIsOnThisTile(cloneTargetPos.x, cloneTargetPos.y);
+                            if (targetTypeTile == Tile.Button) {
+                                ButtonOnGroundBehaviour.ISteppedOnAButton?.Invoke(
+                                    new Vector2Int(cloneTargetPos.x, cloneTargetPos.y), m_board);
+                                m_isCloneSteppingOnButton = true;
+                            }
+
+                            MoveCloneTo(m_clonePath[m_clonePathCurrentIndex]);
+                        }
+
+                        m_clonePathCurrentIndex++;
                     }
-                    
-                    m_clonePathCurrentIndex++;
                 }
                 
                 MoveMeTo(m_directionFacing); // <<<<<<<<<<<<<<<<<<<<<<<MOVE MYSELF<<<<<<<<<<<<<<<<<<<<<<<<
@@ -336,23 +342,27 @@ public class CharacterController : MonoBehaviour {
     }
 
     private void Restart() {
-        CharacterController target;
-        switch (m_side) {
-            case Side.Left:
-                target = rightChara;
-                break;
-            case Side.Right:
-                target = leftChara;
-                break;
-            default:
-                target = this;
-                break;
-        }
-        m_clonePath = target.m_myPath.ToArray();
-        m_clonePos = new Vector2IntC() { coo = target.m_startPos };
-        m_clone.position = m_board.PositionFromCoordinates(m_clonePos.coo.x, m_clonePos.coo.y) + Vector3.up * m_yOffset;
+        if(!m_isAlone) {
+            CharacterController target;
+            switch (m_side) {
+                case Side.Left:
+                    target = rightChara;
+                    break;
+                case Side.Right:
+                    target = leftChara;
+                    break;
+                default:
+                    target = this;
+                    break;
+            }
 
-        m_clonePathCurrentIndex = 0;
+            m_clonePath = target.m_myPath.ToArray();
+            m_clonePos = new Vector2IntC() { coo = target.m_startPos };
+            m_clone.position = m_board.PositionFromCoordinates(m_clonePos.coo.x, m_clonePos.coo.y) +
+                               Vector3.up * m_yOffset;
+
+            m_clonePathCurrentIndex = 0;
+        }
 
         m_myPos.coo = m_startPos;
         Transform transform1 = transform;
