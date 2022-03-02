@@ -32,7 +32,7 @@ public class ButtonOnGroundBehaviour : MonoBehaviour {
         m_defaultMaterial = m_meshRenderer.materials[m_materialIDToChange];
         ISteppedOnAButton += AmIPressedOn;
         ISteppedOutOfAButton += AmILetGo;
-        CharacterController.OnReset += p_isBigReset => Reset();
+        CharacterController.OnReset += Reset;
     }
 
     private void AmIPressedOn(Vector2Int p_coord, BoardBehavior p_board) {
@@ -43,11 +43,12 @@ public class ButtonOnGroundBehaviour : MonoBehaviour {
         if(CheckForCoordinates(p_coord, p_board)) LetGoOfMe();
     }
 
-    private void Reset() {
-        if(isPressed) LetGoOfMe();
+    private void Reset(bool p_b) {
+        LetGoOfMe();
     }
 
     private void PressOnMe() {
+        if (isPressed) return;
         isPressed = true;
         Material[] mats = m_meshRenderer.materials;
         mats[m_materialIDToChange] = m_pressedMaterial;
@@ -58,6 +59,7 @@ public class ButtonOnGroundBehaviour : MonoBehaviour {
     }
 
     private void LetGoOfMe() {
+        if (!isPressed) return;
         isPressed = false;
         Material[] mats = m_meshRenderer.materials;
         mats[m_materialIDToChange] = m_defaultMaterial;

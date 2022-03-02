@@ -432,6 +432,7 @@ public class CharacterController : MonoBehaviour {
         m_ignoreInputAtTheBeginning = true;
     }
 
+    #if UNITY_EDITOR
     private void OnDrawGizmos() {
         
         Gizmos.color = Color.magenta;
@@ -481,4 +482,5 @@ public class CharacterController : MonoBehaviour {
             }
         }
     }
+    #endif
 }

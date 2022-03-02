@@ -23,4 +23,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Nono's Post-it/NiveauPostIt.unity
     guid: c0c19d8ce8dbc1e4990695c3c1f22e05
+  - enabled: 1
+    path: Assets/Scenes/Blue's Impro/Blue's Impro.unity
+    guid: ccd80107a06169446a6e80ef10398a00
   m_configObjects: {}
