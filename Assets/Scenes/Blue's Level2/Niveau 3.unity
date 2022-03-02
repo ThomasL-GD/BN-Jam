@@ -8585,8 +8585,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_characterController: {fileID: 1459305860}
   m_triggerTiles:
-  - {x: 0, y: 2}
-  - {x: 2, y: 0}
+  - {x: 0, y: 0}
+  - {x: 2, y: 2}
   m_appearTime: 2.09
   m_startPos: {x: -1.06, y: -12, z: -1.37}
   m_speed:
