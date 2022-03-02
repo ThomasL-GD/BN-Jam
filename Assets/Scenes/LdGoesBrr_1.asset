@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: LdGoesBrr_1
   m_EditorClassIdentifier: 
   walls: []
-  buttons: []
+  buttons:
+  - {x: 3, y: 3}
   chests: []
