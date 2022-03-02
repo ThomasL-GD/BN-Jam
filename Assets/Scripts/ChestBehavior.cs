@@ -15,6 +15,12 @@ public class ChestBehavior : MonoBehaviour {
     [SerializeField] private float m_height = 2.1f;
     [SerializeField] private float m_animationTime = 2.1f;
     [SerializeField] private float m_lidMaxAngle = 60f;
+    
+    [Space]
+
+    [SerializeField] private int m_materialIDToChange = 1;
+    [SerializeField] private Material m_openMaterial;
+    [SerializeField] private MeshRenderer m_meshRenderer = null;
 
     public static bool isUnlocked = false;
 
@@ -42,12 +48,16 @@ public class ChestBehavior : MonoBehaviour {
     private void Unlock() {
         StartCoroutine(GoDownAndOpen());
         isUnlocked = true;
+        Material[] mats = m_meshRenderer.materials;
+        mats[m_materialIDToChange] = m_openMaterial;
+        m_meshRenderer.materials = mats;
     }
 
     IEnumerator GoDownAndOpen() {
         float elapsedTime = 0f;
         Vector3 initialPos = transform.position;
-        Vector3 initialRot = m_chestLid.rotation.eulerAngles;
+        Vector3 initialRot = m_chestLid.localRotation.eulerAngles;
+        Vector3 lidForward = Vector3.forward;
         
         while (elapsedTime < m_animationTime) {
             yield return new WaitForFixedUpdate();
@@ -56,11 +66,11 @@ public class ChestBehavior : MonoBehaviour {
             float coeff = ratio * ratio;
 
             transform.position = initialPos + Vector3.down * m_height * coeff;
-            m_chestLid.rotation = Quaternion.Euler(initialRot + m_chestLid.forward * m_lidMaxAngle * coeff);
+            m_chestLid.localRotation = Quaternion.Euler(initialRot + lidForward * m_lidMaxAngle * coeff);
         }
 
         transform.position = initialPos + Vector3.down * m_height;
-        m_chestLid.rotation = Quaternion.Euler(initialRot + m_chestLid.forward * m_lidMaxAngle);
+        m_chestLid.localRotation = Quaternion.Euler(initialRot + lidForward * m_lidMaxAngle);
     }
 
     private void OnDestroy() {

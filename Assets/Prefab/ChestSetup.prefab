@@ -54,7 +54,10 @@ MonoBehaviour:
   m_chestLid: {fileID: 6988213688255162654}
   m_height: 1.2
   m_animationTime: 2
-  m_lidMaxAngle: 60
+  m_lidMaxAngle: -60
+  m_materialIDToChange: 1
+  m_openMaterial: {fileID: 2100000, guid: 5fda984f243090748a35a1e46b1883cc, type: 2}
+  m_meshRenderer: {fileID: 4675418608912198597}
 --- !u!1 &6122807586937939463
 GameObject:
   m_ObjectHideFlags: 0
@@ -322,6 +325,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 79b4b362cf9b35b49941d47a04cf7b10, type: 3}
+--- !u!23 &4675418608912198597 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 3096707937762355222, guid: 79b4b362cf9b35b49941d47a04cf7b10, type: 3}
+  m_PrefabInstance: {fileID: 7645945595286471635}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5812247887558054058 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4229614158652035961, guid: 79b4b362cf9b35b49941d47a04cf7b10, type: 3}
