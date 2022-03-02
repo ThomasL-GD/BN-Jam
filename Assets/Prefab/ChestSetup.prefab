@@ -46,9 +46,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69f1bab6cb4c01842a15aacc7e86ef20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  coordinates: {x: 0, y: 3}
+  coordinates: {x: 0, y: 2}
   m_board: {fileID: 0}
-  m_leftTilesContent: {fileID: 0}
+  m_leftTilesContent: {fileID: 11400000, guid: c1d3dd81f850edf459b30cbce1bff88c, type: 2}
   m_rightTilesContent: {fileID: 0}
   m_chestLid: {fileID: 6988213688255162654}
   m_height: 1.2
@@ -61,6 +61,22 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4808714511335477025}
     m_Modifications:
+    - target: {fileID: 3172653708490785612, guid: 6153c12332387274e8d3698324d712c4, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.00000058114523
+      objectReference: {fileID: 0}
+    - target: {fileID: 3172653708490785612, guid: 6153c12332387274e8d3698324d712c4, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3172653708490785612, guid: 6153c12332387274e8d3698324d712c4, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3172653708490785612, guid: 6153c12332387274e8d3698324d712c4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 180
+      objectReference: {fileID: 0}
     - target: {fileID: 5512524302632213339, guid: 6153c12332387274e8d3698324d712c4, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
