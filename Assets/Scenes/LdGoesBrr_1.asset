@@ -12,7 +12,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e01568654d92c647a734edc7f248ab1, type: 3}
   m_Name: LdGoesBrr_1
   m_EditorClassIdentifier: 
-  walls: []
+  walls:
+  - {x: 0, y: 1}
+  - {x: 0, y: 0}
+  - {x: 0, y: 3}
+  - {x: 0, y: 4}
+  - {x: 1, y: 4}
+  - {x: 2, y: 4}
+  - {x: 3, y: 4}
+  - {x: 4, y: 4}
+  - {x: 4, y: 3}
+  - {x: 4, y: 2}
+  - {x: 4, y: 1}
+  - {x: 4, y: 0}
+  - {x: 3, y: 0}
+  - {x: 2, y: 0}
+  - {x: 1, y: 0}
+  - {x: 1, y: 1}
+  - {x: 2, y: 1}
+  - {x: 2, y: 2}
   buttons:
   - {x: 3, y: 3}
-  chests: []
+  chests:
+  - {x: 0, y: 2}
