@@ -23,15 +23,19 @@ public class BoardBehaviourEditor : Editor {
         
         PropertyField(tilesContent);
         
-        Space();
+        Space(10);
         IntSlider(nbXTiles, 2, 12);
         IntSlider(nbYTiles, 2, 12);
         PropertyField(dimensions);
         
-        Space();
+        Space(10);
         PropertyField(tileSelected);
+        if (GUILayout.Button("X +1")) tileSelected.vector2IntValue += new Vector2Int(1, 0);
+        if (GUILayout.Button("X -1")) tileSelected.vector2IntValue += new Vector2Int(-1, 0);
+        if (GUILayout.Button("Y +1")) tileSelected.vector2IntValue += new Vector2Int(0, 1);
+        if (GUILayout.Button("Y -1")) tileSelected.vector2IntValue += new Vector2Int(0, -1);
 
-        Space();
+        Space(20);
         PropertyField(prefabBloc);
 
         if (GUILayout.Button("Build a wall")) {
@@ -42,7 +46,7 @@ public class BoardBehaviourEditor : Editor {
             ((BoardBehavior)target).SetTileWall(tileSelected.vector2IntValue);
         }
 
-        Space();
+        Space(10);
         PropertyField(prefabButton);
 
         if (GUILayout.Button("Place a Button")) {
@@ -53,7 +57,7 @@ public class BoardBehaviourEditor : Editor {
         }
 
 
-        Space();
+        Space(10);
         PropertyField(prefabChest);
         
         if (GUILayout.Button("Place THE Chest")) {
