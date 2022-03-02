@@ -29,6 +29,7 @@ public class ChestBehavior : MonoBehaviour {
     }
 
     private void CheckForWin(int p_numberofpressedbuttons) {
+        if(isUnlocked) return;
         if (m_rightTilesContent == null) {
             if (p_numberofpressedbuttons >= m_leftTilesContent.buttons.Count) Unlock();
         }
