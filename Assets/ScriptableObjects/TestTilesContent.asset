@@ -14,5 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   walls:
   - {x: 1, y: 2}
+  - {x: 2, y: 3}
   buttons:
   - {x: 3, y: 1}
+  chests:
+  - {x: 0, y: 3}
