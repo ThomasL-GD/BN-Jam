@@ -29,7 +29,7 @@ public class BoardBehavior : MonoBehaviour {
         
         CalculateLengths(false);
     }
-
+//coucou
     private void Start() {
         UpdateTiles();
         
