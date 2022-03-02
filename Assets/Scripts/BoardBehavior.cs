@@ -110,35 +110,39 @@ public class BoardBehavior : MonoBehaviour {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1); 
     }
 
-
+#if UNITY_EDITOR
     private void OnDrawGizmos() {
-        
+
         DrawGizmoCross(m_localOriginPosition, Color.magenta, 0.5f);
-        
+
         Transform transform1 = transform;
         Vector3 tileDir = (transform1.right * m_sizeOfATile * 0.5f + transform1.forward * m_sizeOfATile * 0.5f);
-        
+
         Gizmos.color = Color.grey;
-        for (int i = 0; i < m_numberOfXTiles+1; i++) {
-            Gizmos.DrawLine(PositionFromCoordinates(i, 0) - tileDir, PositionFromCoordinates(i, m_numberOfYTiles) - tileDir);
+        for (int i = 0; i < m_numberOfXTiles + 1; i++) {
+            Gizmos.DrawLine(PositionFromCoordinates(i, 0) - tileDir,
+                PositionFromCoordinates(i, m_numberOfYTiles) - tileDir);
         }
-        
-        for (int i = 0; i < m_numberOfYTiles+1; i++) {
-            Gizmos.DrawLine(PositionFromCoordinates(0, i) - tileDir, PositionFromCoordinates(m_numberOfXTiles, i) - tileDir);
+
+        for (int i = 0; i < m_numberOfYTiles + 1; i++) {
+            Gizmos.DrawLine(PositionFromCoordinates(0, i) - tileDir,
+                PositionFromCoordinates(m_numberOfXTiles, i) - tileDir);
         }
-        
-        if(m_tiles != null) {
+
+        if (m_tiles != null) {
             for (int i = 0; i < m_tiles.GetLength(0); i++) {
                 for (int j = 0; j < m_tiles.GetLength(1); j++) {
-                    if (m_tiles[i, j] == Tile.Bloc) DrawGizmoTile(new Vector2Int(x: i, y: j), 1f, new Color(0.9f, 0.4f, 0.2f));
+                    if (m_tiles[i, j] == Tile.Bloc)
+                        DrawGizmoTile(new Vector2Int(x: i, y: j), 1f, new Color(0.9f, 0.4f, 0.2f));
                     if (m_tiles[i, j] == Tile.Button) DrawGizmoTile(new Vector2Int(x: i, y: j), 0.2f, Color.green);
                     if (m_tiles[i, j] == Tile.Chest) DrawGizmoTile(new Vector2Int(x: i, y: j), 1.2f, Color.yellow);
                 }
             }
         }
-        
+
         DrawGizmoTile(m_selectedTile, Color.red);
     }
+#endif
 
 
     private void DrawGizmoCross(Vector3 p_pos, float p_radius = 1f) => DrawGizmoCross(p_pos, p_radius, Gizmos.color);
