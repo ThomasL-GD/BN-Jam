@@ -92,10 +92,9 @@ public class CharacterController : MonoBehaviour {
         m_myPos = new Vector2IntC() { coo = m_startPos };
         Vector3 newPos = m_board.PositionFromCoordinates(m_startPos.x, m_startPos.y);
         Transform transform1 = transform;
-        Vector3 position = transform1.position;
-        position = new Vector3(newPos.x, position.y, newPos.z);
+        Vector3 position = new Vector3(newPos.x, transform1.position.y, newPos.z);
         transform1.position = position;
-        m_yOffset = position.y;
+        m_yOffset = transform1.position.y;
 
         m_trail.positionCount = 1;
         m_trail.SetPosition(0, position);
